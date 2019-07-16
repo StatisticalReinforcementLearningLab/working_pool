@@ -60,7 +60,21 @@ def create_H(num_baseline_features,num_responsivity_features,psi_indices):
 
 
 
-
+def get_sigma_umore(gparams):
+    cov_12 = (gparams.r12-1)*(gparams.u1**.5)*(gparams.u2**.5)
+    cov_13 = (gparams.r13-1)*(gparams.u1**.5)*(gparams.u3**.5)
+    cov_14 = (gparams.r14-1)*(gparams.u1**.5)*(gparams.u4**.5)
+    cov_23 =(gparams.r23-1)*(gparams.u2**.5)*(gparams.u3**.5)
+    cov_24 =(gparams.r24-1)*(gparams.u2**.5)*(gparams.u4**.5)
+    cov_34 =(gparams.r34-1)*(gparams.u3**.5)*(gparams.u4**.5)
+    
+    row_one = [gparams.u1,cov_12,cov_13,cov_14]
+    row_two = [cov_12,gparams.u2,cov_23,cov_24]
+    row_three = [cov_13,cov_23,gparams.u3,cov_34]
+    row_four = [cov_14,cov_24,cov_34,gparams.u4]
+    
+    
+    return np.array([row_one,row_two,row_three,row_four])
 
 
 
