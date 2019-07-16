@@ -19,8 +19,8 @@ if __name__=="__main__":
     train_type =sys.argv[7]
     algtype =sys.argv[8]
     
-    root = 'distributions_rl4rl/'
-    write_directory = 'results/'
+    root = 'pooling/distributions/'
+    write_directory = 'clean/results/'
     sim_all.run_many(algtype,[case],int(start_index),int(end_index),int(update_time),root,write_directory,train_type)
 
 
