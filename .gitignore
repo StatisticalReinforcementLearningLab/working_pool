@@ -1,0 +1,14 @@
+data/
+*.pyc
+*.ipynb_checkpoints
+.pkl
+.p
+.R
+.csv
+*.png
+.png
+*.pkl
+**/*.ipynb_checkpoints/
+.DS_Store
+temp/
+simulation/GPy
