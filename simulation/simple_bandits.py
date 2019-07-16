@@ -247,7 +247,22 @@ def calculate_posterior(global_params,user_id,user_study_day,X,y):
 
     return mu[-(global_params.num_responsivity_features+1):],[j[-(global_params.num_responsivity_features+1):] for j in sigma[-(global_params.num_responsivity_features+1):]]
 
-
+def calculate_posterior_faster(global_params,user_id,user_study_day,X,users,y):
+    H = create_H(global_params.num_baseline_features,global_params.num_responsivity_features,global_params.psi_indices)
+    
+    M = get_M_faster(global_params,user_id,user_study_day,X,users,global_params.sigma_u)
+    ##change this to be mu_theta
+    ##is it updated?  the current mu_theta?
+    adjusted_rewards =get_RT(y,X,global_params.mu_theta,global_params.theta_dim)
+    #print('current global cov')
+    #print(global_params.cov)
+    #.reshape(X.shape[0],X.shape[0])
+    #print(M.shape)
+    mu = get_middle_term(X.shape[0],global_params.cov,global_params.noise_term,M,adjusted_rewards,global_params.mu_theta,global_params.inv_term)
+    #.reshape(X.shape[0],X.shape[0])
+    sigma = get_post_sigma(H,global_params.cov,global_params.sigma_u.reshape(2,2),None,global_params.noise_term,M,X.shape[0],global_params.sigma_theta,global_params.inv_term)
+    
+    return mu[-(global_params.num_responsivity_features+1):],[j[-(global_params.num_responsivity_features+1):] for j in sigma[-(global_params.num_responsivity_features+1):]]
 
 
 def get_middle_term(X_dim,cov,noise_term,M,adjusted_rewards,mu_theta,inv_term):

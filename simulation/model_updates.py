@@ -73,7 +73,7 @@ def update(algo_type,train_type,experiment,time,global_policy_params,personal_po
             global_policy_params.history = temp_data
             for participant in experiment.population.values():
                 if time==participant.last_update_day+pd.DateOffset(days=global_policy_params.update_period):
-                    temp = simple_bandits.calculate_posterior_current(global_policy_params,\
+                    temp = simple_bandits.calculate_posterior_faster(global_policy_params,\
                                                                               participant.pid,participant.current_day_counter,\
                                                                               global_policy_params.history[0], global_policy_params.history[1],global_policy_params.history[2] )
                     mu_beta = temp[0]
