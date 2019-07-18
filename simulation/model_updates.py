@@ -92,10 +92,18 @@ def update(algo_type,train_type,experiment,time,global_policy_params,personal_po
             
                 temp_params = run_gpytorchkernel_larger.run(temp_data[0], temp_data[1],steps,global_policy_params)
             
-            
+
+                        #print(temp_params)
+#global_policy_params.history =temp_data
                 if temp_params['cov'] is not None:
                     global_policy_params.update_params_more(temp_params)
+                inv_term = simple_bandits.get_inv_term(global_policy_params.cov,temp_data[0].shape[0],global_policy_params.noise_term)
+                        
+                global_policy_params.inv_term=inv_term
+                        #print(temp_params)
+                global_policy_params.history =temp_data
             except Exception as e:
+                print('something failed')
                 print(e)
                 pass
                     
