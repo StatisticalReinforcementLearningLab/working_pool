@@ -23,13 +23,16 @@ import model_updates
 
 def initialize_policy_params_TS(experiment,update_period,\
                                 standardize=False,baseline_features=None,psi_features=None,\
-                                responsivity_keys=None,algo_type=None):
+                                responsivity_keys=None,algo_type=None,hob_params=None):
    
     u_params=None
 
 
     
     global_p =gtp.TS_global_params(21,baseline_features=baseline_features,psi_features=psi_features, responsivity_keys= responsivity_keys,uparams = u_params)
+    
+    
+    
     personal_p = pp.TS_personal_params()
 
     
@@ -65,7 +68,15 @@ def initialize_policy_params_TS(experiment,update_period,\
     global_p.mu1_knot = np.zeros(global_p.num_baseline_features+1)
     global_p.sigma1_knot = np.eye(global_p.num_baseline_features+1)
     global_p.sigma2_knot = np.eye(global_p.num_responsivity_features+1)
- 
+    
+    
+    if algo_type=='hob':
+        hob_params['vec_dim'] =global_p.num_baseline_features+1+global_p.num_responsivity_features+1
+        global_p.init_hob_params(hob_params,experiment)
+    
+    elif algo_type=='hob_clipped':
+        hob_params['vec_dim'] =global_p.num_baseline_features+1+2*global_p.num_responsivity_features+2
+        global_p.init_hob_params(hob_params,experiment)
     
     for person in experiment.population.keys():
         
@@ -196,7 +207,7 @@ def new_kind_of_simulation(experiment,policy=None,personal_policy_params=None,gl
                    
                    
                    ##changed to be the same for everyone
-                    prob = TS.prob_cal_ts(z,0,personal_policy_params.mus2[participant.pid],personal_policy_params.sigmas2[participant.pid],global_policy_params,seed=experiment.algo_rando_gen)
+                    prob = TS.prob_cal_ts(z,0,personal_policy_params.mus2[participant.pid],personal_policy_params.sigmas2[participant.pid],global_policy_params,seed=experiment.algo_rando_gen,algo_type=algo_type)
 
                     action = int(experiment.algo_rando_gen.uniform() < prob)
                     if availability:
@@ -282,7 +293,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 if algo_type=='pooling_four':
                     psi = ['location']
                 
-                glob,personal = initialize_policy_params_TS(experiment,7,standardize=False,baseline_features=baseline,psi_features=psi,responsivity_keys=responsivity_keys,algo_type =algo_type)
+                glob,personal = initialize_policy_params_TS(experiment,7,standardize=False,baseline_features=baseline,psi_features=psi,responsivity_keys=responsivity_keys,algo_type =algo_type,hob_params={'degree':.4})
                 
                 hist = new_kind_of_simulation(experiment,'TS',personal,glob,feat_trans=feat_trans,algo_type=algo_type,case=case,sim_num=sim,train_type=train_type)
                 to_save = make_to_save(experiment)
@@ -291,7 +302,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 
                 #return experiment,glob,personal
             
-                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_testing_newwriting.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim)
+                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_testing_newwriting_laplace_clipped.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim)
                 with open(filename,'wb') as f:
                     pickle.dump({'gids':gids,'regrets':rewards,'actions':actions,'history':to_save,'pprams':personal,'gparams':glob.mus2},f)
       

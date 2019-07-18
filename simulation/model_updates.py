@@ -20,6 +20,7 @@ from sklearn import preprocessing
 import tensorflow as tf
 import gc
 import feature_transformations as ft
+import run_hob
 
 
 def update(algo_type,train_type,experiment,time,global_policy_params,personal_policy_params,feat_trans,participant=None):
@@ -142,9 +143,39 @@ def update(algo_type,train_type,experiment,time,global_policy_params,personal_po
                 participant.last_update_day=time
 
 
+    elif algo_type=='hob':
+        temp_hist = feat_trans.get_history_decision_time_avail(experiment,time)
+        temp_hist= feat_trans.history_semi_continuous(temp_hist,global_policy_params)
+        context,users,steps= feat_trans.get_hob_form(temp_hist,global_policy_params)
+        learned = run_hob.update_params(global_policy_params,context,steps)
+        for participant in experiment.population.values():
+            if time==participant.last_update_day+pd.DateOffset(days=global_policy_params.update_period):
+                my_vec = learned[participant.pid*global_policy_params.d:participant.pid*global_policy_params.d+global_policy_params.d][-(global_policy_params.num_responsivity_features+1):]
+                #print(learned.shape)
+                #print(my_vec)
+                personal_policy_params.update_mus(participant.pid,my_vec,2)
+
+    elif algo_type=='hob_clipped':
+        temp_hist = feat_trans.get_history_decision_time_avail(experiment,time)
+        temp_hist= feat_trans.history_semi_continuous(temp_hist,global_policy_params)
+        context,users,steps= feat_trans.get_hob_form_clipped(temp_hist,global_policy_params)
+        mu,sigma = run_hob.update_params_clipped(global_policy_params,context,steps)
+        for participant in experiment.population.values():
+            if time==participant.last_update_day+pd.DateOffset(days=global_policy_params.update_period):
+                my_vec = mu[participant.pid*global_policy_params.d:participant.pid*global_policy_params.d+global_policy_params.d][-(global_policy_params.num_responsivity_features+1):]
+            #print(learned.shape)
+            #print(my_vec)
+            
+            ##my mats
+            
+                personal_policy_params.update_mus(participant.pid,my_vec,2)
+
+
+
+
 
     else:
-        return 'Excepted types are batch, pooled, personalized, pooled_four'
+        return 'Excepted types are batch, pooled, personalized, pooled_four, or hob'
 
 
 

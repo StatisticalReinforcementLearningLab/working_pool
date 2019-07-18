@@ -2,6 +2,8 @@ import pickle
 import participant
 import random
 import numpy as np
+from scipy.sparse.csgraph import laplacian
+import scipy
 
 class TS_global_params:
     
@@ -11,7 +13,7 @@ class TS_global_params:
     Keeps track of hyper-parameters for any TS procedure. 
     '''
     
-    def __init__(self,xi=10,baseline_features=None,psi_features=None,responsivity_keys=None,uparams = None):
+    def __init__(self,xi=10,baseline_features=None,psi_features=None,responsivity_keys=None,uparams = None,hob_params=None):
         self.nums = set([np.float64,int,float])
         self.pi_max = 0.8
         self.pi_min = 0.1
@@ -84,6 +86,25 @@ class TS_global_params:
         self.sigmas2 = None
         if uparams is not None:
             self.init_u_params(uparams)
+
+
+    def init_hob_params(self,hob_params,experiment):
+        degree  = hob_params['degree']
+        num_people = len(experiment.population)
+        adjacency = np.eye(num_people)
+        for i in range(num_people):
+            for j in range(num_people):
+                if i!=j:
+                    adjacency[i][j]=degree * int(experiment.population[i].gid==experiment.population[j].gid)
+        
+        self.adjacency = adjacency
+        self.L = laplacian(adjacency,normed=True)+np.eye(num_people)
+            #self.S =
+        self.lu = np.kron(self.L,np.eye(hob_params['vec_dim']))
+        self.big_S = np.kron(scipy.linalg.cholesky(self.L),np.eye(hob_params['vec_dim']))
+        self.d =hob_params['vec_dim']
+        self.users = num_people
+        
     
     def init_u_params(self,uparams):
         self.u1 = uparams[0]

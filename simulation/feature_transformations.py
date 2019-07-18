@@ -292,3 +292,75 @@ class feature_transformation:
             x = seed.normal(loc=dist[0],scale=scale)
 
             return x
+
+
+        #def to_sparse(self,vec,user_id):
+        def to_sparse(self,num_users,vec,user_id):
+                if type(vec)==np.ndarray:
+                    vec_dim = vec.shape[0]
+                else:
+                    vec_dim = len(vec)
+                to_return = np.zeros(num_users*vec_dim)
+                to_return[user_id*vec_dim:user_id\
+                        *vec_dim+vec_dim]=vec
+                return to_return
+        
+        
+        def get_hob_form(self,temp_history,glob):
+            ##save to change sparse
+#{'base':baseline_data,'resp':responsivity_data,'probs':probs,'actions':actions,'users':users,'steps':steps}
+            num_users = glob.users
+            vec_dim = glob.d
+            #print(num_users)
+            #print(set(temp_history['users']))
+            matrix = np.zeros((len(temp_history['users']),num_users*(vec_dim)))
+            #print(matrix.shape)
+            ##action centering?
+            #faster way to do this
+            steps = []
+            for i in range(len(temp_history['users'])):
+                user_id = temp_history['users'][i]
+                action = temp_history['actions'][i]
+                prob =temp_history['probs'][i]
+                
+                vec = [1]+temp_history['base'][i]+\
+                [(action)* t for t in [1]+temp_history['resp'][i]]
+                    #temp_history['resp'][i]
+                matrix[i][user_id*vec_dim:user_id\
+                          *vec_dim+vec_dim] = vec
+                #assumes no action centering
+                #print(np.dot(vec,glob.mu_theta[:len(vec)]))
+                adjusted_steps = temp_history['steps'][i] - np.dot(vec,glob.mu_theta[:len(vec)])
+
+                steps.append(adjusted_steps)
+            return matrix,temp_history['users'],steps
+
+        def get_hob_form_clipped(self,temp_history,glob):
+            ##save to change sparse
+            #{'base':baseline_data,'resp':responsivity_data,'probs':probs,'actions':actions,'users':users,'steps':steps}
+            num_users = glob.users
+            vec_dim = glob.d
+            #print(num_users)
+            #print(set(temp_history['users']))
+            matrix = np.zeros((len(temp_history['users']),num_users*(vec_dim)))
+            #print(matrix.shape)
+            ##action centering?
+            #faster way to do this
+            steps = []
+            for i in range(len(temp_history['users'])):
+                user_id = temp_history['users'][i]
+                action = temp_history['actions'][i]
+                prob =temp_history['probs'][i]
+                
+                vec = [1]+temp_history['base'][i]+\
+                [(prob)* t for t in [1]+temp_history['resp'][i]]+\
+                [(action-prob)* t for t in [1]+temp_history['resp'][i]]
+                #temp_history['resp'][i]
+                matrix[i][user_id*vec_dim:user_id\
+                          *vec_dim+vec_dim] = vec
+                          #assumes no action centering
+                          #print(np.dot(vec,glob.mu_theta[:len(vec)]))
+                adjusted_steps = temp_history['steps'][i] - np.dot(vec,glob.mu_theta[:len(vec)])
+                          
+                steps.append(adjusted_steps)
+            return matrix,temp_history['users'],steps

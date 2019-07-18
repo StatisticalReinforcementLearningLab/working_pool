@@ -11,22 +11,28 @@ from scipy.linalg import block_diag
 def get_probs(batch,init):
     return [b[init.prob_index] for b in batch if b[init.avail_index]==1]
 
-def prob_cal_ts(z,x,mu,Sigma,global_params,seed=None):
+def prob_cal_ts(z,x,mu,Sigma,global_params,seed=None,algo_type=None):
     
-    pos_mean = np.dot(z,mu)
+    if algo_type is None or algo_type!='hob':
+        pos_mean = np.dot(z,mu)
     
-    pos_var = np.dot(np.dot(np.transpose(z),Sigma),z)
-    pos_var = max(0,pos_var)
+        pos_var = np.dot(np.dot(np.transpose(z),Sigma),z)
+        pos_var = max(0,pos_var)
 
   
  
   
 
-    pit_zero = norm.cdf((pos_mean)/(pos_var**.5))
+        pit_zero = norm.cdf((pos_mean)/(pos_var**.5))
 
   
 
-    prob =  min(bandit.py_c_func(global_params.pi_max, max(bandit.py_c_func(global_params.pi_min, pit_zero))))
+        prob =  min(bandit.py_c_func(global_params.pi_max, max(bandit.py_c_func(global_params.pi_min, pit_zero))))
+    else:
+        act_one = np.dot(z,mu)
+        
+        prob = int(act_one>0)
+    
   
     return prob
 
