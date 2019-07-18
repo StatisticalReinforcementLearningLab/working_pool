@@ -27,6 +27,9 @@ def initialize_policy_params_TS(experiment,update_period,\
    
     u_params=None
 
+    if algo_type=='pooling_four':
+        
+        u_params =[0.0553,0.0467,0.0052,0.0098,0.9030,1,0.5410,1,0.4680,1]
 
     
     global_p =gtp.TS_global_params(21,baseline_features=baseline_features,psi_features=psi_features, responsivity_keys= responsivity_keys,uparams = u_params)
