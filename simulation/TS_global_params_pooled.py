@@ -132,6 +132,18 @@ class TS_global_params:
         self.init_r34 = uparams[9]
     
     
+    def update_uparams(self,uparams):
+        self.u1 = uparams[0]
+        self.u2 = uparams[1]
+        self.u3 = uparams[2]
+        self.u4 = uparams[3]
+        
+        self.r12 = uparams[4]
+        self.r13 = uparams[5]
+        self.r14 = uparams[6]
+        self.r23 = uparams[7]
+        self.r24 = uparams[8]
+        self.r34 = uparams[9]
     
     def feat0_function(self,z,x):
         
