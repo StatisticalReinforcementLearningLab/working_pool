@@ -57,12 +57,12 @@ class study:
         self.study_length=study_length
         self.Z_one =0.0
 
-        self.Z_two =-0.35
+        self.Z_two =-0.5
 
-        self.sigma =.38
+        self.sigma =.45
 
     
-        self.init_population(which_gen,False)
+        self.init_population(which_gen,True)
             
     def get_gid(self):
        
