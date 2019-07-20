@@ -168,9 +168,14 @@ def update(algo_type,train_type,experiment,time,global_policy_params,personal_po
         temp_hist= feat_trans.history_semi_continuous(temp_hist,global_policy_params)
         context,users,steps= feat_trans.get_hob_form_clipped(temp_hist,global_policy_params)
         mu,sigma = run_hob.update_params_clipped(global_policy_params,context,steps)
+        M=global_policy_params.d
+
+        blocks = [sigma[i*M:(i+1)*M,i*M:(i+1)*M] for i in range(int(sigma.shape[0]/M))]
         for participant in experiment.population.values():
             if time==participant.last_update_day+pd.DateOffset(days=global_policy_params.update_period):
                 my_vec = mu[participant.pid*global_policy_params.d:participant.pid*global_policy_params.d+global_policy_params.d][-(global_policy_params.num_responsivity_features+1):]
+                
+                my_sigma = [j[-(global_policy_params.num_responsivity_features+1):] for j in blocks[participant.pid][-(global_policy_params.num_responsivity_features+1):]]
             #print(learned.shape)
             #print(my_vec)
             
