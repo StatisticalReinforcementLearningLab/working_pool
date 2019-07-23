@@ -29,7 +29,7 @@ def initialize_policy_params_TS(experiment,update_period,\
 
     if algo_type=='pooling_four':
         
-        u_params =[0.0553,0.0467,0.0052,0.0098,0.9030,1,0.5410,1,0.4680,1]
+        u_params =[0.0553,0.0467,0.0052,0.0098,0.9030,1.9622,0.5410,1.9801,0.4680,1.9361]
 
     
     global_p =gtp.TS_global_params(21,baseline_features=baseline_features,psi_features=psi_features, responsivity_keys= responsivity_keys,uparams = u_params)
@@ -147,7 +147,7 @@ def new_kind_of_simulation(experiment,policy=None,personal_policy_params=None,gl
                 ### update model
                 ##use global_policy_params_history, or some quick way of aggregating history rather than have any history objects floating around
                 model_updates.update(algo_type,train_type,experiment,time,global_policy_params,personal_policy_params,feat_trans)
-                
+    
 
 
         tod = feat_trans.get_time_of_day(time)
@@ -279,8 +279,8 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
         baseline = ['tod','dow','pretreatment','location']
         responsivity_keys = ['tod','dow','pretreatment','location']
         
-        
-        for u in [update_time]:
+        u = update_time
+        for pn in range(10):
             
             all_actions = {}
             all_rewards = {}
@@ -289,14 +289,14 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
             
             for sim in range(sim_start,sim_end):
                 pop_size=32
-                experiment = study.study(dist_root,pop_size,'_short_unstaggered_6',which_gen=case,sim_number=sim)
+                experiment = study.study(dist_root,pop_size,'_short_unstaggered',which_gen=case,sim_number=sim,pop_number=pn)
                 #experiment.update_beta(set(responsivity_keys))
                
                 psi = []
-                if algo_type=='pooling_four':
-                    psi = ['location']
+                #if algo_type=='pooling_four':
+                psi = ['location']
                 
-                glob,personal = initialize_policy_params_TS(experiment,u,standardize=False,baseline_features=baseline,psi_features=psi,responsivity_keys=responsivity_keys,algo_type =algo_type,hob_params={'degree':1.0})
+                glob,personal = initialize_policy_params_TS(experiment,u,standardize=False,baseline_features=baseline,psi_features=psi,responsivity_keys=responsivity_keys,algo_type =algo_type,hob_params={'degree':0.9})
                 
                 hist = new_kind_of_simulation(experiment,'TS',personal,glob,feat_trans=feat_trans,algo_type=algo_type,case=case,sim_num=sim,train_type=train_type)
                 to_save = make_to_save(experiment)
@@ -305,7 +305,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 
                 #return experiment,glob,personal
             
-                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_testing_newwriting_pooled_location_re.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim)
+                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_testing_newrandom_correct.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn)
                 with open(filename,'wb') as f:
                     pickle.dump({'gids':gids,'regrets':rewards,'actions':actions,'history':to_save,'pprams':personal,'gparams':glob.mus2},f)
       

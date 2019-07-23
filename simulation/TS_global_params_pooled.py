@@ -92,10 +92,32 @@ class TS_global_params:
         degree  = hob_params['degree']
         num_people = len(experiment.population)
         adjacency = np.eye(num_people)
+        other_degree = degree -.4
+        
+        
+        
+        if other_degree<=0:
+            other_degree==.00002
         for i in range(num_people):
+            if experiment.population[i].Z is not None:
+            
+                test =experiment.population[i].beta[-1]+experiment.population[i].Z
+            else:
+                test = 1
+            
+            
             for j in range(num_people):
+                
+                if experiment.population[i].Z is not None:
+                
+                    testtwo =experiment.population[j].beta[-1]+experiment.population[j].Z
+                else:
+                    testtwo = 1
+            
                 if i!=j:
-                    adjacency[i][j]=degree * int(experiment.population[i].gid==experiment.population[j].gid)
+                    adjacency[i][j]=1.0 * int((test>0 and testtwo>0)or(test<0 and testtwo<0) )+0.0*int((test>0 and testtwo<0)or(test<0 and testtwo>0) )
+        
+                   
         
         self.adjacency = adjacency
         self.L = laplacian(adjacency,normed=True)+np.eye(num_people)

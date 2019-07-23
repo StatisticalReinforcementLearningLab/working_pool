@@ -162,11 +162,12 @@ def update(algo_type,train_type,experiment,time,global_policy_params,personal_po
                 #print(learned.shape)
                 #print(my_vec)
                 personal_policy_params.update_mus(participant.pid,my_vec,2)
-
+                participant.last_update_day=time
     elif algo_type=='hob_clipped':
         temp_hist = feat_trans.get_history_decision_time_avail(experiment,time)
         temp_hist= feat_trans.history_semi_continuous(temp_hist,global_policy_params)
         context,users,steps= feat_trans.get_hob_form_clipped(temp_hist,global_policy_params)
+        #print(len(context))
         mu,sigma = run_hob.update_params_clipped(global_policy_params,context,steps)
         M=global_policy_params.d
 
@@ -176,13 +177,14 @@ def update(algo_type,train_type,experiment,time,global_policy_params,personal_po
                 my_vec = mu[participant.pid*global_policy_params.d:participant.pid*global_policy_params.d+global_policy_params.d][-(global_policy_params.num_responsivity_features+1):]
                 
                 my_sigma = [j[-(global_policy_params.num_responsivity_features+1):] for j in blocks[participant.pid][-(global_policy_params.num_responsivity_features+1):]]
-            #print(learned.shape)
+                #print(np.array(my_sigma).shape)
             #print(my_vec)
             
             ##my mats
             
                 personal_policy_params.update_mus(participant.pid,my_vec,2)
-
+                personal_policy_params.update_sigmas(participant.pid,my_sigma,2)
+                participant.last_update_day=time
 
 
 

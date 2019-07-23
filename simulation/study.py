@@ -13,13 +13,14 @@ class study:
     Also which participants are involved at which times. 
     '''
     
-    def __init__(self,root,population_size,study_length,which_gen='case_one',sim_number = None):
+    def __init__(self,root,population_size,study_length,which_gen='case_one',sim_number = None,pop_number=0):
   
         self.root =root
         self.study_seed = sim_number+30000000
         self.sim_number = sim_number
-        self.algo_rando_gen = np.random.RandomState(seed=8000000)
-        self.weather_gen = np.random.RandomState(seed=9000000)
+        self.pop_number=pop_number
+        self.algo_rando_gen = np.random.RandomState(seed=self.study_seed)
+        self.weather_gen = np.random.RandomState(seed=9000000+pop_number)
         
       
         with open('{}person_to_time_indices_pop_{}{}.pkl'.format(root,population_size,study_length),'rb') as f:
@@ -88,7 +89,7 @@ class study:
             
 
 
-            person_seed = k+self.sim_number*1000
+            person_seed = k+self.pop_number*1000
             rg=np.random.RandomState(seed=person_seed)
             
             gid = int(rg.uniform()>=.5)+1
@@ -109,13 +110,13 @@ class study:
             this_beta = [i for i in [  0.05,  0.25,  0.25,  -0.3, 0.25]]
             if location:
                 if which_gen=='case_two':
-                    offset = .3
+                    offset = .25
                     if gid==2:
                         offset = offset*-1
                     this_beta[-1]=this_beta[-1]+offset
                 if which_gen=='case_three':
                     
-                    l=rg.normal(loc=0.07,scale=0.323)
+                    l=rg.normal(loc=-.3,scale=0.25)
                     this_beta[-1]=this_beta[-1]+l
             
                     
