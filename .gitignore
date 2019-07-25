@@ -1,4 +1,7 @@
 data/
+*.pdf
+.pdf
+evaluation/temp_plots
 *.pyc
 *.ipynb_checkpoints
 .pkl

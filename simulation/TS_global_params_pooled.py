@@ -115,7 +115,7 @@ class TS_global_params:
                     testtwo = 1
             
                 if i!=j:
-                    adjacency[i][j]=1.0 * int((test>0 and testtwo>0)or(test<0 and testtwo<0) )+0.0*int((test>0 and testtwo<0)or(test<0 and testtwo>0) )
+                    adjacency[i][j]=0.0 * int((test>0 and testtwo>0)or(test<0 and testtwo<0) )+1.0*int((test>0 and testtwo<0)or(test<0 and testtwo>0) )
         
                    
         
