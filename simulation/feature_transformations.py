@@ -107,6 +107,7 @@ class feature_transformation:
             baseline_data = {}
             responsivity_data = {}
             steps = {}
+            days = {}
 
             history_count = 0
             for user_id,history in history_dict.items():
@@ -118,13 +119,14 @@ class feature_transformation:
                     baseline_data[history_count]=base_line
                     responsivity_data[history_count]=responsivity_vec
                     probs[history_count]=h['prob']
+                    days[history_count]=h['study_day']
                     actions[history_count]=h['action']
                     users[history_count]=user_id
                     steps[history_count]=h['steps']
                     history_count = history_count+1
             if glob.standardize:
                 baseline_data = self.standardize(baseline_data)
-            return {'base':baseline_data,'resp':responsivity_data,'probs':probs,'actions':actions,'users':users,'steps':steps}
+            return {'base':baseline_data,'days':days,'resp':responsivity_data,'probs':probs,'actions':actions,'users':users,'steps':steps}
 
         def get_RT(self,y,X,sigma_theta,x_dim):
                     
@@ -151,6 +153,7 @@ class feature_transformation:
             all_data = []
             all_users = []
             all_steps = []
+            all_days = []
             
             for h_i in history_lookups['base']:
                 vec = history_lookups['base'][h_i]
@@ -159,6 +162,7 @@ class feature_transformation:
                 action = history_lookups['actions'][h_i]
                 user = history_lookups['users'][h_i]
                 steps = history_lookups['steps'][h_i]
+                day = history_lookups['days'][h_i]
                 
                 v = [1]
                 v.extend(vec)
@@ -167,9 +171,11 @@ class feature_transformation:
                 v.append((action-prob))
                 v.extend([(action-prob)*r for r in rvec])
                 all_users.append(user)
+                all_days.append(day)
                 all_steps.append(steps)
                 all_data.append(v)
-            return np.array(all_data),np.array(all_users),np.array([[s] for s in all_steps])
+            
+            return np.array(all_data),np.array(all_users),np.array([[s] for s in all_steps]),np.array(all_days)
 
         def get_form_TS(self,history_lookups):
             keys = history_lookups['base'].keys()
@@ -335,6 +341,13 @@ class feature_transformation:
                 steps.append(adjusted_steps)
             return matrix,temp_history['users'],steps
 
+        
+        def rbf_custom_np(self, X, X2=None):
+
+            if X2 is None:
+                X2=X
+            return math.exp(-((X-X2)**2)/1.0)
+        
         def get_hob_form_clipped(self,temp_history,glob):
             ##save to change sparse
             #{'base':baseline_data,'resp':responsivity_data,'probs':probs,'actions':actions,'users':users,'steps':steps}

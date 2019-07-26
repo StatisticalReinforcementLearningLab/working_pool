@@ -24,7 +24,7 @@ class participant:
         self.gid = gid 
         
         self.current_day_counter = 0
-        self.current_day=times[0]
+        self.current_day=times[0].date()
         
         self.first_week = None
         

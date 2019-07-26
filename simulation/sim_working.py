@@ -26,13 +26,20 @@ def initialize_policy_params_TS(experiment,update_period,\
                                 responsivity_keys=None,algo_type=None,hob_params=None):
    
     u_params=None
+    v_params=None
 
     if algo_type=='pooling_four':
         
-        u_params =[0.0553,0.0467,0.0052,0.0098,0.9030,1.9622,0.5410,1.9801,0.4680,1.9361]
+        u_params =[0.0887,0.0675,0.0364,0.0830,0.5559,1.9379,0.1545,0.6054,1.5840,0.0578]
+#[0.0553,0.0467,0.0052,0.0098,0.9030,1.9622,0.5410,1.9801,0.4680,1.9361]
 
-    
-    global_p =gtp.TS_global_params(21,baseline_features=baseline_features,psi_features=psi_features, responsivity_keys= responsivity_keys,uparams = u_params)
+    if algo_type=='time_effects':
+        
+        u_params =[0.0433,0.0338,0.0068,0.0073,1.7801,1.7499,1.6523,1.7945,1.7079,1.6743]
+
+        v_params =[0.0140,0.0289,0.0444,0.0222]
+
+    global_p =gtp.TS_global_params(21,baseline_features=baseline_features,psi_features=psi_features, responsivity_keys= responsivity_keys,uparams = u_params,vparams = v_params)
     
     
     
@@ -82,6 +89,8 @@ def initialize_policy_params_TS(experiment,update_period,\
         global_p.init_hob_params(hob_params,experiment)
     
     for person in experiment.population.keys():
+        
+        
         
         initial_context = [0 for i in range(global_p.theta_dim)]
         
@@ -162,6 +171,11 @@ def new_kind_of_simulation(experiment,policy=None,personal_policy_params=None,gl
 
         for person in experiment.dates_to_people[time]:
             participant = experiment.population[person]
+            
+            if participant.current_day!=time.date():
+                participant.current_day_counter=participant.current_day_counter+1
+                participant.current_day= time.date()
+            
             dt=int(time in participant.decision_times)
             action = 0
             prob=0
@@ -303,9 +317,9 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 actions,rewards = get_regret(experiment)
                 gids = make_to_groupids(experiment)
                 
-                #return experiment,glob,personal
+                return experiment,glob,personal
             
-                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_testing_newrandom_incorrect.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn)
+                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_testing_newrandom_locstart.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn)
                 with open(filename,'wb') as f:
                     pickle.dump({'gids':gids,'regrets':rewards,'actions':actions,'history':to_save,'pprams':personal,'gparams':glob.mus2},f)
       

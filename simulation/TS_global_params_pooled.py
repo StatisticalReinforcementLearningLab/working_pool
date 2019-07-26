@@ -13,7 +13,7 @@ class TS_global_params:
     Keeps track of hyper-parameters for any TS procedure. 
     '''
     
-    def __init__(self,xi=10,baseline_features=None,psi_features=None,responsivity_keys=None,uparams = None,hob_params=None):
+    def __init__(self,xi=10,baseline_features=None,psi_features=None,responsivity_keys=None,uparams = None,vparams=None,hob_params=None):
         self.nums = set([np.float64,int,float])
         self.pi_max = 0.8
         self.pi_min = 0.1
@@ -51,6 +51,7 @@ class TS_global_params:
       
         self.sigma_u =np.array([[0.06449696, 0.01502549 ],[ 0.01502549,    0.00896479]])
         
+        
         self.rho_term =1.6248689729968946
         
         self.u1 =0.06449696
@@ -86,6 +87,8 @@ class TS_global_params:
         self.sigmas2 = None
         if uparams is not None:
             self.init_u_params(uparams)
+        if vparams is not None:
+            self.init_v_params(vparams)
 
 
     def init_hob_params(self,hob_params,experiment):
@@ -126,7 +129,12 @@ class TS_global_params:
         self.big_S = np.kron(scipy.linalg.cholesky(self.L),np.eye(hob_params['vec_dim']))
         self.d =hob_params['vec_dim']
         self.users = num_people
-        
+                    
+    def init_v_params(self,uparams):
+        self.s1 = uparams[0]
+        self.s2 = uparams[1]
+        self.s3 = uparams[2]
+        self.s4 = uparams[3]
     
     def init_u_params(self,uparams):
         self.u1 = uparams[0]
@@ -166,6 +174,12 @@ class TS_global_params:
         self.r23 = uparams[7]
         self.r24 = uparams[8]
         self.r34 = uparams[9]
+    
+    def update_vparams(self,uparams):
+        self.s1 = uparams[0]
+        self.s2 = uparams[1]
+        self.s3 = uparams[2]
+        self.s4 = uparams[3]
     
     def feat0_function(self,z,x):
         
@@ -235,6 +249,8 @@ class TS_global_params:
         
         self.cov = pdict['cov']
         self.update_uparams(pdict['uparams'])
+        if 'vparams' in pdict:
+            self.update_vparams(pdict['vparams'])
         self.updated_cov=True
     
 

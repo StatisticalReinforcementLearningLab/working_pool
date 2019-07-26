@@ -76,6 +76,12 @@ def get_sigma_umore(gparams):
     
     return np.array([row_one,row_two,row_three,row_four])
 
+def get_sigma_vmore(gparams):
+    
+    
+   
+    return np.diag([gparams.s1,gparams.s2,gparams.s3,gparams.s4])
+
 
 
 def get_M(global_params,user_id,user_study_day,history):
@@ -183,19 +189,22 @@ def calculate_posterior_current(global_params,user_id,user_study_day,X,users,y):
     return mu[-(global_params.num_responsivity_features+1):],[j[-(global_params.num_responsivity_features+1):] for j in sigma[-(global_params.num_responsivity_features+1):]]
 
 
+
+
 def calculate_posterior_time_effects(global_params,user_id,user_study_day,X,users,days,y):
+    sigma_u =get_sigma_umore(global_params)
+    sigma_v =get_sigma_vmore(global_params)
+    H = create_H_four(global_params.num_baseline_features,global_params.num_responsivity_features,global_params.psi_indices)
     
-    H = create_H(global_params.num_baseline_features,global_params.num_responsivity_features,global_params.psi_indices)
-    
-    M = get_M_faster_time_effects(global_params,user_id,user_study_day,X,users,global_params.sigma_u,days,global_params.sigma_v)
+    M = get_M_faster_four_timeeffects(global_params,user_id,user_study_day,X,users,days,sigma_u,sigma_v)
   
     adjusted_rewards =get_RT(y,X,global_params.mu_theta,global_params.theta_dim)
     
     
     mu = get_middle_term(X.shape[0],global_params.cov,global_params.noise_term,M,adjusted_rewards,global_params.mu_theta,global_params.inv_term)
  
-
-    sigma = get_post_sigma_time(H,global_params.cov,global_params.sigma_u.reshape(2,2),global_params.sigma_v,global_params.noise_term,M,X.shape[0],global_params.sigma_theta,global_params.inv_term)
+ #
+    sigma = get_post_sigma_time_effects(H,global_params.cov,sigma_u,sigma_v,global_params.noise_term,M,X.shape[0],global_params.sigma_theta,global_params.inv_term)
     
     return mu[-(global_params.num_responsivity_features+1):],[j[-(global_params.num_responsivity_features+1):] for j in sigma[-(global_params.num_responsivity_features+1):]]
 
@@ -240,6 +249,24 @@ def get_middle_term(X_dim,cov,noise_term,M,adjusted_rewards,mu_theta,inv_term):
 
     return np.add(mu_theta,middle_term)
 
+#first_term = np.add(sigma_u,sigma_v)
+def get_post_sigma_time_effects(H,cov,sigma_u,sigma_v,noise_term,M,x_dim,sigma_theta,inv_term):
+    
+    first_term = np.add(sigma_u,sigma_v)
+    
+    first_term = np.dot(H,first_term)
+    
+    first_term = np.dot(first_term,H.T)
+    
+    middle_term = np.dot(M.T,inv_term)
+    
+    middle_term = np.dot(middle_term,M)
+    
+    last = np.add(sigma_theta,first_term)
+    last = np.subtract(last,middle_term)
+    
+    return last
+
 def get_post_sigma(H,cov,sigma_u,sigma_v,noise_term,M,x_dim,sigma_theta,inv_term):
    
     first_term = sigma_u
@@ -272,8 +299,7 @@ def get_M_faster_four(global_params,user_id,user_study_day,history,users,sigma_u
     t_one = np.dot(phi,global_params.sigma_theta)
     #print(t_one.shape)
     temp = np.dot(H,sigma_u)
-    #print(temp.shape)
-    #print(global_params.sigma_u)
+  
     temp = np.dot(temp,H.T)
     temp = np.dot(phi,temp)
     
@@ -290,7 +316,57 @@ def get_M_faster_four(global_params,user_id,user_study_day,history,users,sigma_u
 
     term = np.add(t_one,t_two)
 
+    return term
+
+
+def dist(x,x2):
+    return math.exp(-((x-x2)**2)/1.0)
+
+def get_M_faster_four_timeeffects(global_params,user_id,user_study_day,history,users,days,sigma_u,sigma_v):
     
+    
+    day_id =user_study_day
+    #print(history)
+    M = [[] for i in range(history.shape[0])]
+    
+    H = create_H_four(global_params.num_baseline_features,global_params.num_responsivity_features,global_params.psi_indices)
+    
+    phi = history[:,global_params.baseline_indices]
+    ##should be fine
+    #print(global_params.sigma_theta)
+    t_one = np.dot(phi,global_params.sigma_theta)
+    #print(t_one.shape)
+    temp = np.dot(H,sigma_u)
+    
+    temp = np.dot(temp,H.T)
+    temp = np.dot(phi,temp)
+    
+    user_ids =users
+    #history[:,global_params.user_id_index]
+    
+    my_days = np.ma.masked_where(user_ids==user_id, user_ids).mask.astype(float)
+    
+    if type(my_days)!=np.ndarray:
+        my_days = np.zeros(history.shape[0])
+    user_matrix = np.diag(my_days)
+
+    t_two = np.matmul(user_matrix,temp)
+
+    term = np.add(t_one,t_two)
+
+    rho_diag = np.diag([dist(d,day_id) for d in days])
+
+  
+
+    temp = np.dot(H,sigma_v)
+    temp = np.dot(temp,H.T)
+    temp = np.dot(phi,temp)
+    #temp = rbf_custom_np(user_study_day,old_day_id)*temp
+    t_three = np.matmul(rho_diag,temp)
+    
+    ##time effects
+    term = np.add(term,t_three)
+
     return term
 
 def create_H_four(num_baseline_features,num_responsivity_features,psi_indices):
