@@ -317,7 +317,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 actions,rewards = get_regret(experiment)
                 gids = make_to_groupids(experiment)
                 
-                return experiment,glob,personal
+                #return experiment,glob,personal
             
                 filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_testing_newrandom_locstart.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn)
                 with open(filename,'wb') as f:
