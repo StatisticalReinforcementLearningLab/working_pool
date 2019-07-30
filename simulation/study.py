@@ -91,7 +91,7 @@ class study:
             
 
 
-            person_seed = k+self.pop_number*1000
+            person_seed = k+self.sim_number*1000
             rg=np.random.RandomState(seed=person_seed)
             
             gid = int(rg.uniform()>=.5)+1
