@@ -30,7 +30,7 @@ def initialize_policy_params_TS(experiment,update_period,\
 
     if algo_type=='pooling_four':
         
-        u_params =[0.0556,0.0460,0.0067,0.0103,0.9265,1.9074,0.4910,1.9117,0.4697,1.4995]
+        u_params =[0.0553,0.0467,0.0052,0.0098,0.9030,1.9622,0.5410,1.9801,0.4680,1.9361]
 #[0.0553,0.0467,0.0052,0.0098,0.9030,1.9622,0.5410,1.9801,0.4680,1.9361]
 #[0.0553,0.0467,0.0052,0.0098,0.9030,1.9622,0.5410,1.9801,0.4680,1.9361]
 
@@ -320,7 +320,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 
                 #return experiment,glob,personal
             
-                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_testing_newrandom_locstartry.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn)
+                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_testing_newrandom_difeff.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn)
                 with open(filename,'wb') as f:
                     pickle.dump({'gids':gids,'regrets':rewards,'actions':actions,'history':to_save,'pprams':personal,'gparams':glob.mus2},f)
       

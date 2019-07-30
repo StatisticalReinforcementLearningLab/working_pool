@@ -19,8 +19,10 @@ class study:
         self.study_seed = sim_number+30000000
         self.sim_number = sim_number
         self.pop_number=pop_number
-        self.algo_rando_gen = np.random.RandomState(seed=self.study_seed)
-        self.weather_gen = np.random.RandomState(seed=9000000+pop_number)
+        #self.study_seed
+        self.algo_rando_gen = np.random.RandomState(seed=8000000)
+        #+pop_number
+        self.weather_gen = np.random.RandomState(seed=9000000)
         
       
         with open('{}person_to_time_indices_pop_{}{}.pkl'.format(root,population_size,study_length),'rb') as f:
@@ -57,10 +59,10 @@ class study:
         self.last_update_day = study_days[0]
         self.study_length=study_length
         self.Z_one =0.0
+        #,35
+        self.Z_two =-0.3
 
-        self.Z_two =-0.35
-
-        self.sigma =.33
+        self.sigma =.3
 
     
         self.init_population(which_gen,True)
@@ -71,7 +73,7 @@ class study:
     
     def update_beta(self,features):
         
-        self.beta =np.array([  0.05,  0.25,  0.25,  -0.3, 0.25 ])
+        self.beta =np.array([  0.05,  -0.3,  0.2,  .3, .25])
         
         potential_features = ['intercept','tod','dow','pretreatment','location']
         new = np.array([self.beta[0]]+[self.beta[i] for i in range(len(self.beta)) if potential_features[i] in features])
@@ -102,21 +104,22 @@ class study:
                     Z=self.Z_two
             if which_gen=='case_three':
                                         
-                Z=rg.normal(loc=0,scale=self.sigma)
+                Z=rg.normal(loc=-.1,scale=self.sigma)
             
             
          
          #this_beta = [i for i in [  0.05,  0.25,  0.25,  0.25, -0.3]]
-            this_beta = [i for i in [  0.05,  0.25,  0.25,  -0.3, 0.25]]
+         #this_beta = [i for i in [  0.05,  0.25,  0.25,  -0.3, 0.25]]
+            this_beta = [0.05,  -0.3,  0.2,  .3, .25]
             if location:
                 if which_gen=='case_two':
-                    offset = .25
+                    offset = .3
                     if gid==2:
                         offset = offset*-1
                     this_beta[-1]=this_beta[-1]+offset
                 if which_gen=='case_three':
                     
-                    l=rg.normal(loc=-.3,scale=0.25)
+                    l=rg.normal(loc=-.1,scale=0.3)
                     this_beta[-1]=this_beta[-1]+l
             
                     
