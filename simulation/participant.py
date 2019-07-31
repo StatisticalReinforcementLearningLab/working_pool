@@ -52,6 +52,13 @@ class participant:
         self.rando_gen = rg
         self.beta = beta
     
+    
+    def update_beta_responsivity(self,indices,factor):
+    
+        temp_beta = [i for i in self.beta]
+        new_beta = [temp_beta[i]*factor for i in indices]
+        self.beta = new_beta
+    
     def set_current_day(self,time):
         if time.date()!=self.current_day.date():
             self.current_day=time

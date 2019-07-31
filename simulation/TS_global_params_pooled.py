@@ -20,6 +20,8 @@ class TS_global_params:
         self.sigma =1.15            
         self.baseline_features=baseline_features
         
+        global_p.beta_updates = None
+        global_p.beta_factor = None
 
         self.responsivity_keys = responsivity_keys
         self.num_baseline_features = len(baseline_features)

@@ -63,7 +63,9 @@ def initialize_policy_params_TS(experiment,update_period,\
     
     global_p.standardize = standardize
     
-    
+    global_p.beta_updates = [1]+[int(responsivity_keys[i] in psi_features) for i in range(len(responsivity_keys))]
+
+    global_p.beta_factor = 0.95
     
     initial_context = [0 for i in range(global_p.theta_dim)]
     
@@ -176,6 +178,10 @@ def new_kind_of_simulation(experiment,policy=None,personal_policy_params=None,gl
             if participant.current_day!=time.date():
                 participant.current_day_counter=participant.current_day_counter+1
                 participant.current_day= time.date()
+                if participant.current_day_counter%7==0:
+                    participant.update_beta_responsivity(global_policy_params\
+                                                         .beta_updates,global_policy_params.beta_factor)
+            ##update responsivity
             
             dt=int(time in participant.decision_times)
             action = 0
