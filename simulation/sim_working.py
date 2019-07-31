@@ -326,7 +326,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 
                 #return experiment,glob,personal
             
-                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_testing_newrandom_difeffrightlongernqm.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn)
+                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_testing_newrandom_control.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn)
                 with open(filename,'wb') as f:
                     pickle.dump({'gids':gids,'regrets':rewards,'actions':actions,'history':to_save,'pprams':personal,'gparams':glob.mus2},f)
       

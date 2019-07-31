@@ -60,9 +60,9 @@ class study:
         self.study_length=study_length
         self.Z_one =0.0
         #,35
-        self.Z_two =-0.3
+        self.Z_two =-0.5
 
-        self.sigma =.3
+        self.sigma =.45
 
     
         self.init_population(which_gen,True)
@@ -73,7 +73,7 @@ class study:
     
     def update_beta(self,features):
         
-        self.beta =np.array([  0.05,  -0.3,  0.2,  .3, .25])
+        self.beta =np.array([  0.05,  0.25,  0.25,  -.3, .25])
         
         potential_features = ['intercept','tod','dow','pretreatment','location']
         new = np.array([self.beta[0]]+[self.beta[i] for i in range(len(self.beta)) if potential_features[i] in features])
@@ -104,13 +104,13 @@ class study:
                     Z=self.Z_two
             if which_gen=='case_three':
                                         
-                Z=rg.normal(loc=-.1,scale=self.sigma)
+                Z=rg.normal(loc=0,scale=self.sigma)
             
             
          
          #this_beta = [i for i in [  0.05,  0.25,  0.25,  0.25, -0.3]]
          #this_beta = [i for i in [  0.05,  0.25,  0.25,  -0.3, 0.25]]
-            this_beta = [0.05,  -0.3,  0.2,  .3, .25]
+            this_beta = [0.05,  0.25,  0.25,  -.3, .25]
             if location:
                 if which_gen=='case_two':
                     offset = .3
@@ -119,7 +119,7 @@ class study:
                     this_beta[-1]=this_beta[-1]+offset
                 if which_gen=='case_three':
                     
-                    l=rg.normal(loc=-.1,scale=0.3)
+                    l=rg.normal(loc=0,scale=0.3)
                     this_beta[-1]=this_beta[-1]+l
             
                     
