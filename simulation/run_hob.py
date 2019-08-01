@@ -11,7 +11,7 @@ def get_covariance(large_user_graph,context):
     #print(np.array(context).std())
     #.01
     #.2
-    return (1/(5))*z+100*large_user_graph
+    return (1/(.2))*z+100*large_user_graph
 
 def get_prior(glob):
     temp = np.random.multivariate_normal(np.zeros(glob.d*glob.users),np.eye(glob.d*glob.users))

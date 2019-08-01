@@ -23,7 +23,7 @@ import model_updates
 
 def initialize_policy_params_TS(experiment,update_period,\
                                 standardize=False,baseline_features=None,psi_features=None,\
-                                responsivity_keys=None,algo_type=None,hob_params=None):
+                                responsivity_keys=None,algo_type=None,hob_params=None,case=None,correct=True):
    
     u_params=None
     v_params=None
@@ -40,7 +40,7 @@ def initialize_policy_params_TS(experiment,update_period,\
 
         v_params =[0.0140,0.0289,0.0444,0.0222]
 
-    global_p =gtp.TS_global_params(21,baseline_features=baseline_features,psi_features=psi_features, responsivity_keys= responsivity_keys,uparams = u_params,vparams = v_params)
+    global_p =gtp.TS_global_params(21,baseline_features=baseline_features,psi_features=psi_features, responsivity_keys= responsivity_keys,uparams = u_params,vparams = v_params,case=case,correct=correct)
     
     
     
@@ -294,7 +294,7 @@ def make_to_groupids(exp):
         to_save[key]=gid
     return to_save
 
-def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_directory,train_type):
+def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_directory,train_type,correct=True):
     for case in cases:
       
         baseline = ['tod','dow','pretreatment','location']
@@ -317,7 +317,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 #if algo_type=='pooling_four':
                 psi = ['location']
                 
-                glob,personal = initialize_policy_params_TS(experiment,u,standardize=False,baseline_features=baseline,psi_features=psi,responsivity_keys=responsivity_keys,algo_type =algo_type,hob_params={'degree':0.9})
+                glob,personal = initialize_policy_params_TS(experiment,u,standardize=False,baseline_features=baseline,psi_features=psi,responsivity_keys=responsivity_keys,algo_type =algo_type,hob_params={'degree':0.9},case=case,correct=correct)
                 
                 hist = new_kind_of_simulation(experiment,'TS',personal,glob,feat_trans=feat_trans,algo_type=algo_type,case=case,sim_num=sim,train_type=train_type)
                 to_save = make_to_save(experiment)
@@ -325,8 +325,10 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 gids = make_to_groupids(experiment)
                 
                 #return experiment,glob,personal
-            
-                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_aug1.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn)
+                cend=''
+                if not correct:
+                    cend = '_inc'
+                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_aug1long{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,cend)
                 with open(filename,'wb') as f:
                     pickle.dump({'gids':gids,'regrets':rewards,'actions':actions,'history':to_save,'pprams':personal,'gparams':glob.mus2},f)
       

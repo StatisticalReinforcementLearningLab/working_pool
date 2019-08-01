@@ -13,13 +13,14 @@ class TS_global_params:
     Keeps track of hyper-parameters for any TS procedure. 
     '''
     
-    def __init__(self,xi=10,baseline_features=None,psi_features=None,responsivity_keys=None,uparams = None,vparams=None,hob_params=None):
+    def __init__(self,xi=10,baseline_features=None,psi_features=None,responsivity_keys=None,uparams = None,vparams=None,hob_params=None,case=None,correct =True ):
         self.nums = set([np.float64,int,float])
         self.pi_max = 0.8
         self.pi_min = 0.1
         self.sigma =1.15            
         self.baseline_features=baseline_features
-        
+        self.case=case
+        self.correct = correct
         self.beta_updates = None
         self.beta_factor = None
 
@@ -106,7 +107,7 @@ class TS_global_params:
         for i in range(num_people):
             if experiment.population[i].Z is not None:
             
-                test =experiment.population[i].beta[-1]+experiment.population[i].Z
+                test =experiment.population[i].Z
             else:
                 test = 1
             
@@ -115,14 +116,19 @@ class TS_global_params:
                 
                 if experiment.population[i].Z is not None:
                 
-                    testtwo =experiment.population[j].beta[-1]+experiment.population[j].Z
+                    testtwo =experiment.population[j].Z
                 else:
                     testtwo = 1
             
                 if i!=j:
-                    adjacency[i][j]=0.0 * int((test>0 and testtwo>0)or(test<0 and testtwo<0) )+1.0*int((test>0 and testtwo<0)or(test<0 and testtwo>0) )
-        
-                   
+                    
+                    
+                    if self.case=='case_two' or self.case=='case_one':
+                        mult = int(self.correct)
+                        adjacency[i][j]=mult * int(experiment.population[j].gid==experiment.population[i].gid )+(1-mult)*int(experiment.population[j].gid!=experiment.population[i].gid )
+                    elif self.case=='case_three':
+                        mult = int(self.correct)
+                        adjacency[i][j]=mult * int((test>0 and testtwo>0)or(test<0 and testtwo<0) )+(1-mult)*int((test>0 and testtwo<0)or(test<0 and testtwo>0) )
         
         self.adjacency = adjacency
         self.L = laplacian(adjacency,normed=True)+np.eye(num_people)
