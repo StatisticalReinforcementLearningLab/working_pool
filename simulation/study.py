@@ -20,9 +20,11 @@ class study:
         self.sim_number = sim_number
         self.pop_number=pop_number
         #self.study_seed
-        self.algo_rando_gen = np.random.RandomState(seed=8000000)
+        #8000000
+        self.algo_rando_gen = np.random.RandomState(seed=self.study_seed)
         #+pop_number
-        self.weather_gen = np.random.RandomState(seed=9000000)
+        #9000000
+        self.weather_gen = np.random.RandomState(seed=9000000+pop_number)
         
       
         with open('{}person_to_time_indices_pop_{}{}.pkl'.format(root,population_size,study_length),'rb') as f:
@@ -91,8 +93,9 @@ class study:
           
             
 
+            #k+self.sim_number*1000
+            person_seed = k+self.pop_number*1000
 
-            person_seed = k+self.sim_number*1000
             rg=np.random.RandomState(seed=person_seed)
             
             gid = int(rg.uniform()>=.5)+1
