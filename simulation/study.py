@@ -60,9 +60,10 @@ class study:
         self.study_length=study_length
         self.Z_one =0.0
         #,35
-        self.Z_two =-0.5
+        self.Z_two =-0.35
 
-        self.sigma =.45
+        self.sigma =.33
+            #.45
 
     
         self.init_population(which_gen,True)
@@ -113,13 +114,13 @@ class study:
             this_beta = [0.05,  0.25,  0.25,  -.3, .25]
             if location:
                 if which_gen=='case_two':
-                    offset = .3
+                    offset = .25
                     if gid==2:
                         offset = offset*-1
                     this_beta[-1]=this_beta[-1]+offset
                 if which_gen=='case_three':
                     
-                    l=rg.normal(loc=0,scale=0.3)
+                    l=rg.normal(loc=-.3,scale=0.25)
                     this_beta[-1]=this_beta[-1]+l
             
                     
