@@ -302,7 +302,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
         responsivity_keys = ['tod','dow','pretreatment','location']
         
         u = update_time
-        for pn in range(0):
+        for pn in range(1):
             
             all_actions = {}
             all_rewards = {}
