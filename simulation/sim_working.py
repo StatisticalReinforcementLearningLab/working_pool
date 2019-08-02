@@ -302,7 +302,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
         responsivity_keys = ['tod','dow','pretreatment','location']
         
         u = update_time
-        for pn in range(10):
+        for pn in range(0):
             
             all_actions = {}
             all_rewards = {}
@@ -329,7 +329,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 cend=''
                 if not correct:
                     cend = '_inc'
-                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_aug1longrandomback{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,cend)
+                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_aug1shortrandomback{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,cend)
                 with open(filename,'wb') as f:
                     pickle.dump({'gids':gids,'regrets':rewards,'actions':actions,'history':to_save,'pprams':personal,'gparams':glob.mus2},f)
       
