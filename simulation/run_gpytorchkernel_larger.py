@@ -499,6 +499,7 @@ def run(X,users,y,global_params):
                     test_sigma = get_sigma_umore(sigma_temp)
                     eigs = np.linalg.eig(test_sigma)
                     print(i)
+                    print(test_sigma)
                     print(eigs)
                     f_preds = model(X)
                     f_covar = f_preds.covariance_matrix
