@@ -448,7 +448,7 @@ class GPRegressionModel(gpytorch.models.ExactGP):
 
 def run(X,users,y,global_params):
     #initial_u1,initial_u2,initial_rho,initial_noise,baseline_indices,psi_indices,user_index
-    torch.manual_seed(1e6)
+    #torch.manual_seed(1e6)
     user_mat= get_users(users,users)
     #print(user_mat.shape)
     #print(X.shape)
@@ -498,7 +498,7 @@ def run(X,users,y,global_params):
                     sigma_temp = [model.covar_module.u1.item(),model.covar_module.u2.item(),model.covar_module.u3.item(),model.covar_module.u4.item(),model.covar_module.rho_12.item(),model.covar_module.rho_13.item(),model.covar_module.rho_14.item(),model.covar_module.rho_23.item(),model.covar_module.rho_24.item(),model.covar_module.rho_34.item()]
                     test_sigma = get_sigma_umore(sigma_temp)
                     eigs = np.linalg.eig(test_sigma)
-                    print(i)
+                    #print(i)
                     print(test_sigma)
                     print(eigs)
                     f_preds = model(X)
