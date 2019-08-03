@@ -32,7 +32,32 @@ def get_sigma_u(u1,u2,rho):
     off_diagaonal_term = u1**.5*u2**.5*(rho-1)
     return np.array([[u1,off_diagaonal_term],[off_diagaonal_term,u2]])
 
-
+def get_sigma_umore(params):
+    u1 = params[0]
+    u2 = params[1]
+    u3 = params[2]
+    u4 = params[3]
+    r12 = params[4]
+    r13 = params[5]
+    r14 =params[6]
+    r23 = params[7]
+    r24 = params[8]
+    r34 = params[9]
+    
+    cov_12 = (r12-1)*(u1**.5)*(u2**.5)
+    cov_13 = (r13-1)*(u1**.5)*(u3**.5)
+    cov_14 = (r14-1)*(u1**.5)*(u4**.5)
+    cov_23 =(r23-1)*(u2**.5)*(u3**.5)
+    cov_24 =(r24-1)*(u2**.5)*(u4**.5)
+    cov_34 =(r34-1)*(u3**.5)*(u4**.5)
+    
+    row_one = [u1,cov_12,cov_13,cov_14]
+    row_two = [cov_12,u2,cov_23,cov_24]
+    row_three = [cov_13,cov_23,u3,cov_34]
+    row_four = [cov_14,cov_24,cov_34,u4]
+    
+    
+    return np.array([row_one,row_two,row_three,row_four])
 
 class MyKernel(Kernel):
   
@@ -460,19 +485,21 @@ def run(X,users,y,global_params):
     with gpytorch.settings.use_toeplitz(False):
             for i in range(num_iter):
                 try:
-                    #print('training')
+                    print('training')
                     #print(i)
                     optimizer.zero_grad()
                     output = model(X)
                 #print(type(output))
                     loss = -mll(output, y)
                     loss.backward()
-                    #print('Iter %d/%d - Loss: %.3f' % (i + 1, num_iter, loss.item()))
+                    print('Iter %d/%d - Loss: %.3f' % (i + 1, num_iter, loss.item()))
                     optimizer.step()
                     #sigma_temp = get_sigma_u(model.covar_module.u1.item(),model.covar_module.u2.item(),model.covar_module.rho.item())
                     sigma_temp = [model.covar_module.u1.item(),model.covar_module.u2.item(),model.covar_module.u3.item(),model.covar_module.u4.item(),model.covar_module.rho_12.item(),model.covar_module.rho_13.item(),model.covar_module.rho_14.item(),model.covar_module.rho_23.item(),model.covar_module.rho_24.item(),model.covar_module.rho_34.item()]
-                    
-                    #eigs = np.linalg.eig(sigma_temp)
+                    test_sigma = get_sigma_umore(sigma_temp)
+                    eigs = np.linalg.eig(test_sigma)
+                    print(i)
+                    print(eigs)
                     f_preds = model(X)
                     f_covar = f_preds.covariance_matrix
                     covtemp = f_covar.detach().numpy()

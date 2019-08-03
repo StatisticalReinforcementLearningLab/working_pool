@@ -16,15 +16,15 @@ class study:
     def __init__(self,root,population_size,study_length,which_gen='case_one',sim_number = None,pop_number=0):
   
         self.root =root
-        self.study_seed = sim_number+30000000
+        self.study_seed = sim_number*1000+1000
         self.sim_number = sim_number
         self.pop_number=pop_number
         #self.study_seed
         #8000000
-        self.algo_rando_gen = np.random.RandomState(seed=8000000)
+        self.algo_rando_gen = np.random.RandomState(seed=self.study_seed)
         #+pop_number
         #9000000
-        self.weather_gen = np.random.RandomState(seed=9000000)
+        self.weather_gen = np.random.RandomState(seed=self.study_seed+1)
         
       
         with open('{}person_to_time_indices_pop_{}{}.pkl'.format(root,population_size,study_length),'rb') as f:
@@ -94,7 +94,7 @@ class study:
             
 
             #k+self.sim_number*1000
-            person_seed =k+self.sim_number*1000
+            person_seed =k
                 #k+self.pop_number*1000
 
             rg=np.random.RandomState(seed=person_seed)
