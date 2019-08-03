@@ -504,12 +504,15 @@ def run(X,users,y,global_params):
                     f_preds = model(X)
                     f_covar = f_preds.covariance_matrix
                     covtemp = f_covar.detach().numpy()
-                    if np.isreal(sigma_temp).all() and not np.isnan(covtemp).all():
+                    if np.isreal(sigma_temp).all() and not np.isnan(covtemp).all()and abs(eigs[0][0])>0.001 and abs(eigs[0][1])>0.001and abs(eigs[0][2])>0.001 and abs(eigs[0][3])>0.001:
                         sigma_u = sigma_temp
                         cov=covtemp
                         #print(np.isreal( covtemp))
                         #print(cov)
                         noise = likelihood.noise_covar.noise.item()
+                    else:
+                        break
+                
 
 
                 except Exception as e:
@@ -517,7 +520,21 @@ def run(X,users,y,global_params):
                     print('here')
                     break
 #train(50)
-    
+        if i<2:
+            likelihood = gpytorch.likelihoods.GaussianLikelihood()
+                
+            likelihood.noise_covar.initialize(noise=(global_params.o_noise_term)*torch.ones(1))
+                
+            model = GPRegressionModel(X, y, likelihood,user_mat,first_mat,global_params)
+            sigma_u = [model.covar_module.u1.item(),model.covar_module.u2.item(),model.covar_module.u3.item(),model.covar_module.u4.item(),model.covar_module.rho_12.item(),model.covar_module.rho_13.item(),model.covar_module.rho_14.item(),model.covar_module.rho_23.item(),model.covar_module.rho_24.item(),model.covar_module.rho_34.item()]
+            
+            noise =global_params.noise_term
+
+            f_preds = model(X)
+
+            f_covar = f_preds.covariance_matrix
+        
+            cov = f_covar.detach().numpy()
     
 
 #print('cov')
