@@ -504,7 +504,7 @@ def run(X,users,y,global_params):
                     f_preds = model(X)
                     f_covar = f_preds.covariance_matrix
                     covtemp = f_covar.detach().numpy()
-                    if np.isreal(sigma_temp).all() and not np.isnan(covtemp).all()and abs(eigs[0][0])>0.001 and abs(eigs[0][1])>0.001and abs(eigs[0][2])>0.001 and abs(eigs[0][3])>0.001:
+                    if np.isreal(sigma_temp).all() and not np.isnan(covtemp).all()and abs(eigs[0][0])>0.005 and abs(eigs[0][1])>0.005and abs(eigs[0][2])>0.005 and abs(eigs[0][3])>0.005:
                         sigma_u = sigma_temp
                         cov=covtemp
                         #print(np.isreal( covtemp))
