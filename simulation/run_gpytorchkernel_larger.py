@@ -485,22 +485,22 @@ def run(X,users,y,global_params):
     with gpytorch.settings.use_toeplitz(False):
             for i in range(num_iter):
                 try:
-                    print('training')
+                    #print('training')
                     #print(i)
                     optimizer.zero_grad()
                     output = model(X)
                 #print(type(output))
                     loss = -mll(output, y)
                     loss.backward()
-                    print('Iter %d/%d - Loss: %.3f' % (i + 1, num_iter, loss.item()))
+                    #print('Iter %d/%d - Loss: %.3f' % (i + 1, num_iter, loss.item()))
                     optimizer.step()
                     #sigma_temp = get_sigma_u(model.covar_module.u1.item(),model.covar_module.u2.item(),model.covar_module.rho.item())
                     sigma_temp = [model.covar_module.u1.item(),model.covar_module.u2.item(),model.covar_module.u3.item(),model.covar_module.u4.item(),model.covar_module.rho_12.item(),model.covar_module.rho_13.item(),model.covar_module.rho_14.item(),model.covar_module.rho_23.item(),model.covar_module.rho_24.item(),model.covar_module.rho_34.item()]
                     test_sigma = get_sigma_umore(sigma_temp)
                     eigs = np.linalg.eig(test_sigma)
                     #print(i)
-                    print(test_sigma)
-                    print(eigs)
+                    #print(test_sigma)
+                    #print(eigs)
                     f_preds = model(X)
                     f_covar = f_preds.covariance_matrix
                     covtemp = f_covar.detach().numpy()

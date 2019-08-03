@@ -180,9 +180,7 @@ def new_kind_of_simulation(experiment,policy=None,personal_policy_params=None,gl
                 participant.current_day_counter=participant.current_day_counter+1
                 participant.current_day= time.date()
                 #and algo_type=='time_effects'
-                if participant.current_day_counter%7==0 :
-                    participant.update_beta_responsivity(global_policy_params\
-                                                         .beta_updates,global_policy_params.beta_factor)
+
             ##update responsivity
             
             dt=int(time in participant.decision_times)
@@ -330,7 +328,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 cend=''
                 if not correct:
                     cend = '_inc'
-                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_testingeigh{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,cend)
+                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_testingeigrandom{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,cend)
                 with open(filename,'wb') as f:
                     pickle.dump({'gids':gids,'regrets':rewards,'actions':actions,'history':to_save,'pprams':personal,'gparams':glob.mus2},f)
       
