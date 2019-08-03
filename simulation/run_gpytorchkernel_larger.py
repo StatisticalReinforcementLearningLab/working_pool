@@ -520,21 +520,21 @@ def run(X,users,y,global_params):
                     print('here')
                     break
 #train(50)
-        if i<2:
-            likelihood = gpytorch.likelihoods.GaussianLikelihood()
+            if i<2:
+                likelihood = gpytorch.likelihoods.GaussianLikelihood()
                 
-            likelihood.noise_covar.initialize(noise=(global_params.o_noise_term)*torch.ones(1))
+                likelihood.noise_covar.initialize(noise=(global_params.o_noise_term)*torch.ones(1))
                 
-            model = GPRegressionModel(X, y, likelihood,user_mat,first_mat,global_params)
-            sigma_u = [model.covar_module.u1.item(),model.covar_module.u2.item(),model.covar_module.u3.item(),model.covar_module.u4.item(),model.covar_module.rho_12.item(),model.covar_module.rho_13.item(),model.covar_module.rho_14.item(),model.covar_module.rho_23.item(),model.covar_module.rho_24.item(),model.covar_module.rho_34.item()]
+                model = GPRegressionModel(X, y, likelihood,user_mat,first_mat,global_params)
+                sigma_u = [model.covar_module.u1.item(),model.covar_module.u2.item(),model.covar_module.u3.item(),model.covar_module.u4.item(),model.covar_module.rho_12.item(),model.covar_module.rho_13.item(),model.covar_module.rho_14.item(),model.covar_module.rho_23.item(),model.covar_module.rho_24.item(),model.covar_module.rho_34.item()]
             
-            noise =global_params.noise_term
+                noise =global_params.noise_term
 
-            f_preds = model(X)
+                f_preds = model(X)
 
-            f_covar = f_preds.covariance_matrix
+                f_covar = f_preds.covariance_matrix
         
-            cov = f_covar.detach().numpy()
+                cov = f_covar.detach().numpy()
     
 
 #print('cov')
