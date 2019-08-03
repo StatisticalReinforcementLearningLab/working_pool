@@ -158,6 +158,7 @@ def new_kind_of_simulation(experiment,policy=None,personal_policy_params=None,gl
                 
                 ### update model
                 ##use global_policy_params_history, or some quick way of aggregating history rather than have any history objects floating around
+                    print(global_policy_params.decision_times)
                 model_updates.update(algo_type,train_type,experiment,time,global_policy_params,personal_policy_params,feat_trans)
     
 
