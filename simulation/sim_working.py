@@ -158,7 +158,7 @@ def new_kind_of_simulation(experiment,policy=None,personal_policy_params=None,gl
                 
                 ### update model
                 ##use global_policy_params_history, or some quick way of aggregating history rather than have any history objects floating around
-                print(global_policy_params.decision_times)
+                #print(global_policy_params.decision_times)
             model_updates.update(algo_type,train_type,experiment,time,global_policy_params,personal_policy_params,feat_trans)
     
 
@@ -310,7 +310,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
             
             for sim in range(sim_start,sim_end):
                 pop_size=32
-                experiment = study.study(dist_root,pop_size,'_short_unstaggered',which_gen=case,sim_number=sim,pop_number=pn)
+                experiment = study.study(dist_root,pop_size,'_short_staggered_12',which_gen=case,sim_number=sim,pop_number=pn)
                 #experiment.update_beta(set(responsivity_keys))
                
                 psi = []
@@ -328,7 +328,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 cend=''
                 if not correct:
                     cend = '_inc'
-                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_testingeigrandom{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,cend)
+                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_staggered{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,cend)
                 with open(filename,'wb') as f:
                     pickle.dump({'gids':gids,'regrets':rewards,'actions':actions,'history':to_save,'pprams':personal,'gparams':glob.mus2},f)
       
