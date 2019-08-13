@@ -138,7 +138,7 @@ def make_to_save(exp):
             
                 key = '{}-{}-{}'.format(pid,time,pdata.gid)
                 #,'decision_time','avail','action','optimal_action'
-                to_save[key]={k:v for k,v in context.items() if k in ['steps','avail','decision_time']}
+                to_save[key]={k:v for k,v in context.items() if k in ['steps','avail','decision_time','action','optimal_action']}
         return to_save
 
 def new_kind_of_simulation(experiment,policy=None,personal_policy_params=None,global_policy_params=None,generative_functions=None,which_gen=None,feat_trans = None,algo_type = None,case=None,sim_num=None,train_type='None'):
