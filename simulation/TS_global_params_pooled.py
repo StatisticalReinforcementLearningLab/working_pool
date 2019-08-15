@@ -30,7 +30,7 @@ class TS_global_params:
         self.num_responsivity_features = len(responsivity_keys)
        
         self.psi_indices = psi_features
-
+        self.sim_number=None
         
         self.xi  = xi
         

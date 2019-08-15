@@ -356,7 +356,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 psi = ['location']
                 
                 glob,personal = initialize_policy_params_TS(experiment,u,standardize=False,baseline_features=baseline,psi_features=psi,responsivity_keys=responsivity_keys,algo_type =algo_type,hob_params={'degree':0.9},case=case,correct=correct)
-                
+                glob.sim_number=sim
                 hist = new_kind_of_simulation(experiment,'TS',personal,glob,feat_trans=feat_trans,algo_type=algo_type,case=case,sim_num=sim,train_type=train_type)
                 to_save = make_to_save(experiment)
                 actions,rewards = get_regret(experiment)
@@ -367,7 +367,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 cend=''
                 if not correct:
                     cend = '_inc'
-                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_815{}time_cond{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,cend,time_cond)
+                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_8152{}time_cond{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,cend,time_cond)
                 with open(filename,'wb') as f:
                     pickle.dump({'gids':gids,'regrets':rewards,'actions':actions,'pregret':per_rewards,'history':to_save,'pprams':personal,'gparams':glob.mus2},f)
       
