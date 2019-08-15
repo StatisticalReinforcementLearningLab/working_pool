@@ -311,14 +311,8 @@ def get_regret_person_specific(experiment):
         for time,data in person.history.items():
             if data['decision_time'] and data['avail']:
                 key = time
-                if key not in optimal_actions:
-                    optimal_actions[key]=[]
-                if key not in rewards:
-                    rewards[key]=[]
-                if key not in actions:
-                    actions[key]=[]
+              
                 if data['optimal_action']!=-1:
-                    optimal_actions[key].append(int(data['action']==data['optimal_action']))
                     regret = int(data['action']!=data['optimal_action'])*(abs(data['optimal_reward']))
                     #rewards[key].append(regret)
                     #actions[key].append(data['action'])
