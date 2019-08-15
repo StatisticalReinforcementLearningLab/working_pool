@@ -21,7 +21,8 @@ class study:
         self.pop_number=pop_number
         #self.study_seed
         #8000000
-        self.algo_rando_gen = np.random.RandomState(seed=sim_number)
+        #sim_number
+        self.algo_rando_gen = np.random.RandomState(seed=8000000)
         #+pop_number
         #9000000
         #self.study_seed+1
