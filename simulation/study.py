@@ -13,7 +13,7 @@ class study:
     Also which participants are involved at which times. 
     '''
     
-    def __init__(self,root,population_size,study_length,which_gen='case_one',sim_number = None,pop_number=0):
+    def __init__(self,root,population_size,study_length,which_gen='case_one',sim_number = None,pop_number=0,time_condition='None'):
   
         self.root =root
         self.study_seed = sim_number*1000+1000
@@ -25,7 +25,7 @@ class study:
         #+pop_number
         #9000000
         self.weather_gen = np.random.RandomState(seed=self.study_seed+1)
-        
+        self.time_condition=time_condition
       
         with open('{}person_to_time_indices_pop_{}{}.pkl'.format(root,population_size,study_length),'rb') as f:
             pse=pickle.load(f)
@@ -68,7 +68,7 @@ class study:
             #.45
 
     
-        self.init_population(which_gen,True)
+        self.init_population(which_gen,True,time_condition)
             
     def get_gid(self):
        
@@ -86,7 +86,7 @@ class study:
     
     
     
-    def init_population(self,which_gen,location):
+    def init_population(self,which_gen,location,time_condition='None'):
          
         for k,v in self.person_to_time.items():
             
@@ -126,9 +126,17 @@ class study:
                     
                     l=rg.normal(loc=0,scale=0.1)
                     this_beta[-1]=this_beta[-1]+l
+        
+            beta_regret = [i for i in this_beta]
+            if time_condition=='no_location':
+                this_beta[2] = .8
+                beta_regret = this_beta[:2]+this_beta[3:]
+            if time_condition=='burden':
+                this_beta[2] = .8
+                beta_regret =[.7,.5,.2,0,-.2,-.4]+[this_beta[i] for i in range(len(this_beta)) if i not in set([0,2])]
+                this_beta = [.7,.5,.2,0,-.2,-.4]+this_beta[1:]
             
-                    
-            person = participant.participant(pid=k,gid=gid,times=v,decision_times = self.person_to_decision_times[k],Z=Z,rg=rg,beta=np.array(this_beta))
+            person = participant.participant(pid=k,gid=gid,times=v,decision_times = self.person_to_decision_times[k],Z=Z,rg=rg,beta=np.array(this_beta),beta_regret = beta_regret)
      
             self.population[k]=person
 

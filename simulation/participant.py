@@ -12,7 +12,7 @@ class participant:
     Also which participants are involved at which times. 
     '''
     
-    def __init__(self, pid=None,times=None,decision_times=None,gid=None,Z=None,rg=None,beta=None):
+    def __init__(self, pid=None,times=None,decision_times=None,gid=None,Z=None,rg=None,beta=None,beta_regret=None):
         self.root = None
        
         self.pid = pid
@@ -51,6 +51,7 @@ class participant:
         self.Z=Z
         self.rando_gen = rg
         self.beta = beta
+        self.beta_regret = beta_regret
     
     
     def update_beta_responsivity(self,indices,factor):

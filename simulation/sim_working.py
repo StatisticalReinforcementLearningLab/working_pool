@@ -141,6 +141,9 @@ def make_to_save(exp):
                 to_save[key]={k:v for k,v in context.items() if k in ['steps','avail','decision_time','action','optimal_action']}
         return to_save
 
+def get_week_vec(current_day_counter):
+    return [int(int(current_day_counter/(7))==(i-1)) for i in range(1,7)]
+
 def new_kind_of_simulation(experiment,policy=None,personal_policy_params=None,global_policy_params=None,generative_functions=None,which_gen=None,feat_trans = None,algo_type = None,case=None,sim_num=None,train_type='None'):
     experiment.last_update_day=experiment.study_days[0]
     tod_check = set([])
@@ -216,6 +219,17 @@ def new_kind_of_simulation(experiment,policy=None,personal_policy_params=None,gl
                     pretreatment = feat_trans.get_pretreatment(steps_last_time_period)
                     z = [1]
                     calc = [1,tod,dow,pretreatment,location]
+                    
+                    if experiment.time_condition=='burden':
+                        week_part  = get_week_vec(participant.current_day_counter)
+                        #
+                        calc = week_part+[tod,dow,pretreatment,location]
+                        calc_regret = week_part+[tod,pretreatment,location]
+                    if experiment.time_condition=='no_location':
+                        calc = [1,tod,dow,pretreatment,location]
+                        calc_regret = [1,tod,pretreatment,location]
+                    
+                    
                     if 'tod' in global_policy_params.responsivity_keys:
                         z.append(tod)
                     if 'dow' in global_policy_params.responsivity_keys:
@@ -240,7 +254,7 @@ def new_kind_of_simulation(experiment,policy=None,personal_policy_params=None,gl
                         steps = feat_trans.get_steps_action(context,seed = participant.rando_gen)
                         add = action*(feat_trans.get_add_no_action(calc,participant.beta,participant.Z))
                         participant.steps = steps+add
-                        optimal_reward = get_optimal_reward(participant.beta,calc,participant.Z)
+                        optimal_reward = get_optimal_reward(participant.beta_regret,calc_regret,participant.Z)
                         optimal_action = int(optimal_reward>0)
                     else:
                         steps = feat_trans.get_steps_no_action(participant.gid,tod,dow,location,\
@@ -260,7 +274,7 @@ def new_kind_of_simulation(experiment,policy=None,personal_policy_params=None,gl
                 'dow':dow,'tod':tod,'weather':weather,\
                     'pretreatment':feat_trans.get_pretreatment(steps_last_time_period),\
                         'optimal_reward':optimal_reward,'optimal_action':optimal_action,\
-                            'mu2':global_policy_params.mus2,'gid':participant.gid}
+                            'mu2':global_policy_params.mus2,'gid':participant.gid,'calc':calc,'calcr':calc_regret}
 
                 participant.history[time]=context_dict
 
@@ -286,6 +300,30 @@ def get_regret(experiment):
                     actions[key].append(data['action'])
     return optimal_actions,rewards
 
+def get_regret_person_specific(experiment):
+    optimal_actions ={}
+    rewards = {}
+    actions = {}
+    for pid,person in experiment.population.items():
+        if pid not in rewards:
+            rewards[pid]={}
+        for time,data in person.history.items():
+            if data['decision_time'] and data['avail']:
+                key = time
+                if key not in optimal_actions:
+                    optimal_actions[key]=[]
+                if key not in rewards:
+                    rewards[key]=[]
+                if key not in actions:
+                    actions[key]=[]
+                if data['optimal_action']!=-1:
+                    optimal_actions[key].append(int(data['action']==data['optimal_action']))
+                    regret = int(data['action']!=data['optimal_action'])*(abs(data['optimal_reward']))
+                    #rewards[key].append(regret)
+                    #actions[key].append(data['action'])
+                    rewards[pid][time]=regret
+    return rewards
+
 def make_to_groupids(exp):
     to_save  = {}
     for pid,pdata in exp.population.items():
@@ -294,11 +332,16 @@ def make_to_groupids(exp):
         to_save[key]=gid
     return to_save
 
-def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_directory,train_type,correct=True):
+def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_directory,train_type,correct=True,time_cond='None'):
     for case in cases:
       
         baseline = ['tod','dow','pretreatment','location']
         responsivity_keys = ['tod','dow','pretreatment','location']
+        
+        if time_cond=='no_location' or time_cond=='burden':
+            baseline = ['tod','pretreatment','location']
+            responsivity_keys = ['tod','pretreatment','location']
+        
         
         u = update_time
         for pn in range(1):
@@ -310,7 +353,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
             
             for sim in range(sim_start,sim_end):
                 pop_size=32
-                experiment = study.study(dist_root,pop_size,'_short_staggered_12',which_gen=case,sim_number=sim,pop_number=pn)
+                experiment = study.study(dist_root,pop_size,'_short_staggered_12',which_gen=case,sim_number=sim,pop_number=pn,time_condition=time_cond)
                 #experiment.update_beta(set(responsivity_keys))
                
                 psi = []
@@ -322,15 +365,16 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 hist = new_kind_of_simulation(experiment,'TS',personal,glob,feat_trans=feat_trans,algo_type=algo_type,case=case,sim_num=sim,train_type=train_type)
                 to_save = make_to_save(experiment)
                 actions,rewards = get_regret(experiment)
+                per_rewards = get_regret_person_specific(experiment)
                 gids = make_to_groupids(experiment)
                 
                 #return experiment,glob,personal
                 cend=''
                 if not correct:
                     cend = '_inc'
-                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_staggered{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,cend)
+                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_test_time{}time_cond{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,cend,time_cond)
                 with open(filename,'wb') as f:
-                    pickle.dump({'gids':gids,'regrets':rewards,'actions':actions,'history':to_save,'pprams':personal,'gparams':glob.mus2},f)
+                pickle.dump({'gids':gids,'regrets':rewards,'actions':actions,'pregret':per_rewards,'history':to_save,'pprams':personal,'gparams':glob.mus2},f)
       
 
 
