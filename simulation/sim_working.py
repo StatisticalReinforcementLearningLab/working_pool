@@ -219,7 +219,7 @@ def new_kind_of_simulation(experiment,policy=None,personal_policy_params=None,gl
                     pretreatment = feat_trans.get_pretreatment(steps_last_time_period)
                     z = [1]
                     calc = [1,tod,dow,pretreatment,location]
-                    calc_regret = [1,tod,pretreatment,location]
+                    calc_regret = [1,tod,dow,pretreatment,location]
                     
                     if experiment.time_condition=='burden':
                         week_part  = get_week_vec(participant.current_day_counter)
