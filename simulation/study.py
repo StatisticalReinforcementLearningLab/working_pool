@@ -134,9 +134,9 @@ class study:
                 this_beta[2] = .8
                 beta_regret = this_beta[:2]+this_beta[3:]
             if time_condition=='burden':
-                this_beta[2] = .8
-                beta_regret =[.7,.5,.2,0,-.2,-.4]+[this_beta[i] for i in range(len(this_beta)) if i not in set([0,2])]
-                this_beta = [.7,.5,.2,0,-.2,-.4]+this_beta[1:]
+                this_beta[2] = .4
+                beta_regret = this_beta
+                this_beta = [.4,.2,0,-.2,-3,-.4]+this_beta[1:]
             
             person = participant.participant(pid=k,gid=gid,times=v,decision_times = self.person_to_decision_times[k],Z=Z,rg=rg,beta=np.array(this_beta),beta_regret = beta_regret)
      

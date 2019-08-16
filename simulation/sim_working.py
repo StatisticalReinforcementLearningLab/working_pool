@@ -225,7 +225,7 @@ def new_kind_of_simulation(experiment,policy=None,personal_policy_params=None,gl
                         week_part  = get_week_vec(participant.current_day_counter)
                         #
                         calc = week_part+[tod,dow,pretreatment,location]
-                        calc_regret = week_part+[tod,pretreatment,location]
+                        calc_regret = [1,tod,dow,pretreatment,location]
                     if experiment.time_condition=='no_location':
                         calc = [1,tod,dow,pretreatment,location]
                         calc_regret = [1,tod,pretreatment,location]
@@ -333,7 +333,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
         baseline = ['tod','dow','pretreatment','location']
         responsivity_keys = ['tod','dow','pretreatment','location']
         
-        if time_cond=='no_location' or time_cond=='burden':
+        if time_cond=='no_location':
             baseline = ['tod','pretreatment','location']
             responsivity_keys = ['tod','pretreatment','location']
         
@@ -367,7 +367,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 cend=''
                 if not correct:
                     cend = '_inc'
-                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_sanitythreeunstaggered{}time_cond{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,cend,time_cond)
+                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_{}816447time_cond{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,time_cond,cend)
                 with open(filename,'wb') as f:
                     pickle.dump({'gids':gids,'regrets':rewards,'actions':actions,'pregret':per_rewards,'history':to_save,'pprams':personal,'gparams':glob.mus2},f)
       
