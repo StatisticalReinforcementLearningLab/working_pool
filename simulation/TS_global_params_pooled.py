@@ -185,9 +185,11 @@ class TS_global_params:
     
     def update_vparams(self,uparams):
         self.s1 = uparams[0]
-        self.s2 = uparams[1]
+        self.s2 =0.0
+            #uparams[1]
         self.s3 = uparams[2]
-        self.s4 = uparams[3]
+        self.s4 =0.0
+    #uparams[3]
     
     def feat0_function(self,z,x):
         

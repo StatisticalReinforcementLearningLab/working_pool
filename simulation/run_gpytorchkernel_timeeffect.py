@@ -170,9 +170,9 @@ class MyKernel(Kernel):
     
     
         self.s1 = gparams.s1
-        self.s2 = gparams.s2
+        self.s2 = 0
         self.s3 = gparams.s3
-        self.s4 = gparams.s4
+        self.s4 = 0
     
     
     #self.register_prior("u1_prior", gpytorch.priors.SmoothedBoxPrior(a=0,b=10,sigma=1), "u1")

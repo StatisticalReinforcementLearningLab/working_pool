@@ -37,8 +37,8 @@ def initialize_policy_params_TS(experiment,update_period,\
     if algo_type=='time_effects':
         
         u_params =[0.0433,0.0338,0.0068,0.0073,1.7801,1.7499,1.6523,1.7945,1.7079,1.6743]
-
-        v_params =[0.0140,0.0289,0.0444,0.0222]
+        #[0.0433,0.0337,0.0067,0.0072,1.7783,1.7505,1.6506,1.7960,1.7069,1.6745,0.0165,0.0,0.0388,0.0]
+        v_params =[0.0165,0.0,0.0388,0.0]
 
     global_p =gtp.TS_global_params(21,baseline_features=baseline_features,psi_features=psi_features, responsivity_keys= responsivity_keys,uparams = u_params,vparams = v_params,case=case,correct=correct)
     
@@ -367,7 +367,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 cend=''
                 if not correct:
                     cend = '_inc'
-                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_sanitytwostaggered{}time_cond{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,cend,time_cond)
+                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_sanitythreeunstaggered{}time_cond{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,cend,time_cond)
                 with open(filename,'wb') as f:
                     pickle.dump({'gids':gids,'regrets':rewards,'actions':actions,'pregret':per_rewards,'history':to_save,'pprams':personal,'gparams':glob.mus2},f)
       
