@@ -66,7 +66,7 @@ class study:
         #,35
         self.Z_two =-0.5
 
-        self.sigma =.45
+        self.sigma =.4
             #.45
 
     
