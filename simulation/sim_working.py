@@ -327,7 +327,7 @@ def make_to_groupids(exp):
         to_save[key]=gid
     return to_save
 
-def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_directory,train_type,correct=True,time_cond='None'):
+def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_directory,train_type,correct=True,time_cond='None',pop_size=32):
     for case in cases:
       
         baseline = ['tod','dow','pretreatment','location']
@@ -347,7 +347,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
             feat_trans = ft.feature_transformation(dist_root)
             
             for sim in range(sim_start,sim_end):
-                pop_size=32
+                
                 experiment = study.study(dist_root,pop_size,'_short_staggered_18',which_gen=case,sim_number=sim,pop_number=pn,time_condition=time_cond)
                 #experiment.update_beta(set(responsivity_keys))
                

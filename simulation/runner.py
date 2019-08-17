@@ -22,6 +22,6 @@ if __name__=="__main__":
     
     root = 'pooling/distributions_rl4rl/'
     write_directory = 'clean/results/'
-    sim_working.run_many(algtype,[case],int(start_index),int(end_index),int(update_time),root,write_directory,train_type,time_cond=timetype)
+    sim_working.run_many(algtype,[case],int(start_index),int(end_index),int(update_time),root,write_directory,train_type,time_cond=timetype,pop_size=int(population))
 
 
