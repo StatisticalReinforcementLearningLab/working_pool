@@ -205,8 +205,8 @@ def new_kind_of_simulation(experiment,policy=None,personal_policy_params=None,gl
             if time <= participant.times[0]:
                         steps_last_time_period = 0
             else:
-                if time.hour==0 and time.minute==0:
-                    participant.current_day_counter=participant.current_day_counter+1
+                #if time.hour==0 and time.minute==0:
+                #participant.current_day_counter=participant.current_day_counter+1
 
                 steps_last_time_period = participant.steps
 
@@ -367,7 +367,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 cend=''
                 if not correct:
                     cend = '_inc'
-                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_{}818basetime_cond{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,time_cond,cend)
+                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_{}818twotime_cond{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,time_cond,cend)
                 with open(filename,'wb') as f:
                     pickle.dump({'gids':gids,'regrets':rewards,'actions':actions,'pregret':per_rewards,'history':to_save,'pprams':personal,'gparams':glob.mus2},f)
       

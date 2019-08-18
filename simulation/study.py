@@ -62,11 +62,11 @@ class study:
         self.update_minute = 30
         self.last_update_day = study_days[0]
         self.study_length=study_length
-        self.Z_one =0.0
+        self.Z_one =0.2
         #,35
-        self.Z_two =-0.5
+        self.Z_two =-0.3
 
-        self.sigma =.4
+        self.sigma =.35
             #.45
 
     
@@ -78,7 +78,7 @@ class study:
     
     def update_beta(self,features):
         
-        self.beta =np.array([  0.05,  0.25,  0.25,  .2, -.3])
+        self.beta =np.array([  0.05,  0.2,  0.2,  -.2, -.3])
         
         potential_features = ['intercept','tod','dow','pretreatment','location']
         new = np.array([self.beta[0]]+[self.beta[i] for i in range(len(self.beta)) if potential_features[i] in features])
@@ -117,7 +117,7 @@ class study:
          
          #this_beta = [i for i in [  0.05,  0.25,  0.25,  0.25, -0.3]]
          #this_beta = [i for i in [  0.05,  0.25,  0.25,  -0.3, 0.25]]
-            this_beta = [0.05,  0.25,  0.25,  .2, -.3]
+            this_beta = [0.05,  0.25,  0.2,  -.2, -.35]
             if location:
                 if which_gen=='case_two':
                     offset = .1
