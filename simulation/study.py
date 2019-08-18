@@ -64,7 +64,7 @@ class study:
         self.study_length=study_length
         self.Z_one =0.0
         #,35
-        self.Z_two =-0.8
+        self.Z_two =-0.5
 
         self.sigma =.4
             #.45
