@@ -64,7 +64,7 @@ class study:
         self.study_length=study_length
         self.Z_one =0.0
         #,35
-        self.Z_two =-0.5
+        self.Z_two =-0.8
 
         self.sigma =.4
             #.45
@@ -136,7 +136,7 @@ class study:
             if time_condition=='burden':
                 this_beta[2] = .35
                 beta_regret = this_beta
-                this_beta = [.15,.05,0,-.15,-.2,-.4]+this_beta[1:]
+                this_beta = [.35,.2,.15,.1,0.05,0.0,-.1,-.2,-.3,-.4,-.5,-.6]+this_beta[1:]
             
             person = participant.participant(pid=k,gid=gid,times=v,decision_times = self.person_to_decision_times[k],Z=Z,rg=rg,beta=np.array(this_beta),beta_regret = beta_regret)
      
