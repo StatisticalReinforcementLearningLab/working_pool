@@ -214,6 +214,7 @@ def new_kind_of_simulation(experiment,policy=None,personal_policy_params=None,gl
             add=None
             optimal_action = -1
             optimal_reward = -100
+            other_reward=-100
             if dt:
                 if policy=='TS':
                     pretreatment = feat_trans.get_pretreatment(steps_last_time_period)
@@ -256,6 +257,7 @@ def new_kind_of_simulation(experiment,policy=None,personal_policy_params=None,gl
                         add = action*(feat_trans.get_add_no_action(calc,participant.beta,participant.Z))
                         participant.steps = steps+add
                         optimal_reward = get_optimal_reward(participant.beta_regret,calc_regret,participant.Z)
+                        other_reward = get_optimal_reward(participant.beta,calc,participant.Z)
                         optimal_action = int(optimal_reward>0)
                     else:
                         steps = feat_trans.get_steps_no_action(participant.gid,tod,dow,location,\
@@ -275,7 +277,7 @@ def new_kind_of_simulation(experiment,policy=None,personal_policy_params=None,gl
                 'dow':dow,'tod':tod,'weather':weather,\
                     'pretreatment':feat_trans.get_pretreatment(steps_last_time_period),\
                         'optimal_reward':optimal_reward,'optimal_action':optimal_action,\
-                            'mu2':global_policy_params.mus2,'gid':participant.gid,'calc':calc,'calcr':calc_regret}
+                            'mu2':global_policy_params.mus2,'gid':participant.gid,'calc':calc,'calcr':calc_regret,'other_reward':other_reward}
 
                 participant.history[time]=context_dict
 
@@ -284,6 +286,7 @@ def get_regret(experiment):
     optimal_actions ={}
     rewards = {}
     actions = {}
+    other_regrets = {}
     for pid,person in experiment.population.items():
         for time,data in person.history.items():
             if data['decision_time'] and data['avail']:
@@ -292,14 +295,17 @@ def get_regret(experiment):
                     optimal_actions[key]=[]
                 if key not in rewards:
                     rewards[key]=[]
+                if key not in other_regrets:
+                    other_regrets[key]=[]
                 if key not in actions:
                     actions[key]=[]
                 if data['optimal_action']!=-1:
                     optimal_actions[key].append(int(data['action']==data['optimal_action']))
                     regret = int(data['action']!=data['optimal_action'])*(abs(data['optimal_reward']))
+                    oregret = int(data['action']!=data['optimal_action'])*(abs(data['other_reward']))
                     rewards[key].append(regret)
                     actions[key].append(data['action'])
-    return optimal_actions,rewards
+    return optimal_actions,rewards,other_regrets
 
 def get_regret_person_specific(experiment):
     optimal_actions ={}
@@ -359,7 +365,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 glob.sim_number=sim
                 hist = new_kind_of_simulation(experiment,'TS',personal,glob,feat_trans=feat_trans,algo_type=algo_type,case=case,sim_num=sim,train_type=train_type)
                 to_save = make_to_save(experiment)
-                actions,rewards = get_regret(experiment)
+                actions,rewards,other_regrets = get_regret(experiment)
                 per_rewards = get_regret_person_specific(experiment)
                 gids = make_to_groupids(experiment)
                 
@@ -367,9 +373,9 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 cend=''
                 if not correct:
                     cend = '_inc'
-                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_{}818twotime_cond{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,time_cond,cend)
+                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_{}818twotimesave_cond{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,time_cond,cend)
                 with open(filename,'wb') as f:
-                    pickle.dump({'gids':gids,'regrets':rewards,'actions':actions,'pregret':per_rewards,'history':to_save,'pprams':personal,'gparams':glob.mus2},f)
+                    pickle.dump({'gids':gids,'regrets':rewards,'oregrets':other_regrets,'actions':actions,'pregret':per_rewards,'history':to_save,'pprams':personal,'gparams':glob.mus2},f)
       
 
 
