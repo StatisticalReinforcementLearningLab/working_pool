@@ -312,9 +312,11 @@ def get_regret_person_specific(experiment):
     optimal_actions ={}
     rewards = {}
     actions = {}
+    other_regrets={}
     for pid,person in experiment.population.items():
         if pid not in rewards:
             rewards[pid]={}
+            other_regrets[pid]={}
         for time,data in person.history.items():
             if data['decision_time'] and data['avail']:
                 key = time
@@ -324,7 +326,12 @@ def get_regret_person_specific(experiment):
                     #rewards[key].append(regret)
                     #actions[key].append(data['action'])
                     rewards[pid][time]=regret
-    return rewards
+
+                    oregret = int(data['action']!=data['optimal_action'])*(abs(data['other_reward']))
+          
+                    other_regrets[pid][key]=oregret
+
+    return rewards,other_regrets
 
 def make_to_groupids(exp):
     to_save  = {}
@@ -367,16 +374,16 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 hist = new_kind_of_simulation(experiment,'TS',personal,glob,feat_trans=feat_trans,algo_type=algo_type,case=case,sim_num=sim,train_type=train_type)
                 to_save = make_to_save(experiment)
                 actions,rewards,other_regrets = get_regret(experiment)
-                per_rewards = get_regret_person_specific(experiment)
+                per_rewards,perregrets = get_regret_person_specific(experiment)
                 gids = make_to_groupids(experiment)
                 
                 #return experiment,glob,personal
                 cend=''
                 if not correct:
                     cend = '_inc'
-                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_{}818twotimesaveshortnegative_cond{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,time_cond,cend)
+                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_{}818twotimesaveshortmajority_cond{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,time_cond,cend)
                 with open(filename,'wb') as f:
-                    pickle.dump({'gids':gids,'regrets':rewards,'oregrets':other_regrets,'actions':actions,'pregret':per_rewards,'history':to_save,'pprams':personal,'gparams':glob.mus2},f)
+                    pickle.dump({'gids':gids,'regrets':rewards,'oregrets':other_regrets,'actions':actions,'pregret':per_rewards,'poregret':perregrets,'history':to_save,'pprams':personal,'gparams':glob.mus2},f)
       
 
 

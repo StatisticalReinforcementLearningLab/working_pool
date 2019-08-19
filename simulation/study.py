@@ -64,7 +64,7 @@ class study:
         self.study_length=study_length
         self.Z_one =0.1
         #,35
-        self.Z_two =-0.25
+        self.Z_two =-0.5
 
         self.sigma =.35
             #.45
@@ -118,7 +118,8 @@ class study:
          #this_beta = [i for i in [  0.05,  0.25,  0.25,  0.25, -0.3]]
          #this_beta = [i for i in [  0.05,  0.25,  0.25,  -0.3, 0.25]]
          #this_beta = [0.05,  0.25,  0.2,  -.1, -.35]
-            this_beta=[0.05,  -0.1,  0.1,  0.3, -0.35]
+         #this_beta=[0.05,  -0.1,  0.1,  0.3, -0.35]
+            this_beta=[0.05,  0.1,  0.2,  0.3, -0.35 ]
             if location:
                 if which_gen=='case_two':
                     offset = .1
