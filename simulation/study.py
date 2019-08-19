@@ -136,10 +136,10 @@ class study:
                 this_beta[2] = .8
                 beta_regret = this_beta[:2]+this_beta[3:]
             if time_condition=='burden':
-                this_beta[2] = .35
+                #this_beta[2] = .35
                 beta_regret = this_beta
                 #this_beta = [.35,.2,.15,.1,0.05,0.0,-.1,-.2,-.3,-.4,-.5,-.6]+this_beta[1:]
-                this_beta = [.2,.1,0.0,-.1,-.2,-.35]+this_beta[1:]
+                this_beta = [.15,.05,0.0,-.1,-.2,-.35]+this_beta[1:]
                 
             person = participant.participant(pid=k,gid=gid,times=v,decision_times = self.person_to_decision_times[k],Z=Z,rg=rg,beta=np.array(this_beta),beta_regret = beta_regret)
      
