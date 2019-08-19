@@ -64,7 +64,7 @@ class study:
         self.study_length=study_length
         self.Z_one =0.2
         #,35
-        self.Z_two =-0.3
+        self.Z_two =-0.4
 
         self.sigma =.35
             #.45
@@ -117,7 +117,7 @@ class study:
          
          #this_beta = [i for i in [  0.05,  0.25,  0.25,  0.25, -0.3]]
          #this_beta = [i for i in [  0.05,  0.25,  0.25,  -0.3, 0.25]]
-            this_beta = [0.05,  0.25,  0.2,  -.2, -.35]
+            this_beta = [0.05,  0.25,  0.2,  -.1, -.35]
             if location:
                 if which_gen=='case_two':
                     offset = .1
@@ -136,8 +136,9 @@ class study:
             if time_condition=='burden':
                 this_beta[2] = .35
                 beta_regret = this_beta
-                this_beta = [.35,.2,.15,.1,0.05,0.0,-.1,-.2,-.3,-.4,-.5,-.6]+this_beta[1:]
-            
+                #this_beta = [.35,.2,.15,.1,0.05,0.0,-.1,-.2,-.3,-.4,-.5,-.6]+this_beta[1:]
+                this_beta = [.2,.1,0.0,-.1,-.2,-.35]+this_beta[1:]
+                
             person = participant.participant(pid=k,gid=gid,times=v,decision_times = self.person_to_decision_times[k],Z=Z,rg=rg,beta=np.array(this_beta),beta_regret = beta_regret)
      
             self.population[k]=person
