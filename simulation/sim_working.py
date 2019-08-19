@@ -304,6 +304,7 @@ def get_regret(experiment):
                     regret = int(data['action']!=data['optimal_action'])*(abs(data['optimal_reward']))
                     oregret = int(data['action']!=data['optimal_action'])*(abs(data['other_reward']))
                     rewards[key].append(regret)
+                    other_regrets[key].append(oregret)
                     actions[key].append(data['action'])
     return optimal_actions,rewards,other_regrets
 
@@ -354,7 +355,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
             
             for sim in range(sim_start,sim_end):
                 
-                experiment = study.study(dist_root,pop_size,'_short_staggered_18',which_gen=case,sim_number=sim,pop_number=pn,time_condition=time_cond)
+                experiment = study.study(dist_root,pop_size,'_short_staggered_12',which_gen=case,sim_number=sim,pop_number=pn,time_condition=time_cond)
                 #experiment.update_beta(set(responsivity_keys))
                
                 psi = []
@@ -373,7 +374,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 cend=''
                 if not correct:
                     cend = '_inc'
-                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_{}818twotimesave_cond{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,time_cond,cend)
+                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_{}818twotimesaveshort_cond{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,time_cond,cend)
                 with open(filename,'wb') as f:
                     pickle.dump({'gids':gids,'regrets':rewards,'oregrets':other_regrets,'actions':actions,'pregret':per_rewards,'history':to_save,'pprams':personal,'gparams':glob.mus2},f)
       
