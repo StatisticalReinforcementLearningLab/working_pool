@@ -123,12 +123,14 @@ class TS_global_params:
                 if i!=j:
                     
                     
-                    if self.case=='case_two' or self.case=='case_one':
+                    if self.case=='case_two':
                         mult = int(self.correct)
                         adjacency[i][j]=mult * int(experiment.population[j].gid==experiment.population[i].gid )+(1-mult)*int(experiment.population[j].gid!=experiment.population[i].gid )
                     elif self.case=='case_three':
                         mult = int(self.correct)
                         adjacency[i][j]=mult * int((test>0 and testtwo>0)or(test<0 and testtwo<0) )+(1-mult)*int((test>0 and testtwo<0)or(test<0 and testtwo>0) )
+                    elif self.case=='case_one':
+                        adjacency[i][j]=1.0*degree
         
         self.adjacency = adjacency
         self.L = laplacian(adjacency,normed=True)+np.eye(num_people)

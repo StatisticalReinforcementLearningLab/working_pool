@@ -369,8 +369,12 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 psi = []
                 #if algo_type=='pooling_four':
                 psi = ['location']
-                
-                glob,personal = initialize_policy_params_TS(experiment,u,standardize=False,baseline_features=baseline,psi_features=psi,responsivity_keys=responsivity_keys,algo_type =algo_type,hob_params={'degree':0.9},case=case,correct=correct)
+                cend=''
+                degree= 1.0
+                if not correct:
+                    cend = '_inc'
+                    degree=0.2
+                glob,personal = initialize_policy_params_TS(experiment,u,standardize=False,baseline_features=baseline,psi_features=psi,responsivity_keys=responsivity_keys,algo_type =algo_type,hob_params={'degree':degree},case=case,correct=correct)
                 glob.sim_number=sim
                 hist = new_kind_of_simulation(experiment,'TS',personal,glob,feat_trans=feat_trans,algo_type=algo_type,case=case,sim_num=sim,train_type=train_type)
                 to_save = make_to_save(experiment)
@@ -379,10 +383,8 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 gids = make_to_groupids(experiment)
                 
                 #return experiment,glob,personal
-                cend=''
-                if not correct:
-                    cend = '_inc'
-                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_{}818twotimesaveshortmajoritymellong_cond{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,time_cond,cend)
+
+                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_{}818twotimesaveshortmajoritymellongf_cond{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,time_cond,cend)
                 with open(filename,'wb') as f:
                     pickle.dump({'gids':gids,'regrets':rewards,'oregrets':other_regrets,'actions':actions,'pregret':per_rewards,'poregret':perregrets,'history':to_save,'pprams':personal,'gparams':glob.mus2},f)
       

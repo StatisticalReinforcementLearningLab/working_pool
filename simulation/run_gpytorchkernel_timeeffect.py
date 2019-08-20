@@ -275,7 +275,7 @@ class MyKernel(Kernel):
         ttimeone = prod * (self.s1**2)
         
         
-        prod = MatmulLazyTensor(x1_[:,1:2], x2_[:,1:2].transpose(-1, -2))
+        prod = MatmulLazyTensor(x1_[:,2:3], x2_[:,2:3].transpose(-1, -2))
         
         ttimetwo = prod * (self.s2**2)
         
