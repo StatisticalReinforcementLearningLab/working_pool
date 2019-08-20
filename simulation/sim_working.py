@@ -138,7 +138,7 @@ def make_to_save(exp):
             
                 key = '{}-{}-{}'.format(pid,time,pdata.gid)
                 #,'decision_time','avail','action','optimal_action'
-                to_save[key]={k:v for k,v in context.items() if k in ['steps','avail','decision_time','action','optimal_action']}
+                to_save[key]={k:v for k,v in context.items() if k in ['steps','avail','decision_time','action','optimal_action','other_action']}
         return to_save
 
 def get_week_vec(current_day_counter):
@@ -382,7 +382,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 cend=''
                 if not correct:
                     cend = '_inc'
-                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_{}818twotimesaveshortmajoritydifmore_cond{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,time_cond,cend)
+                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_{}818twotimesaveshortmajorityr_cond{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,time_cond,cend)
                 with open(filename,'wb') as f:
                     pickle.dump({'gids':gids,'regrets':rewards,'oregrets':other_regrets,'actions':actions,'pregret':per_rewards,'poregret':perregrets,'history':to_save,'pprams':personal,'gparams':glob.mus2},f)
       

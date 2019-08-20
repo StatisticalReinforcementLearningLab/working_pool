@@ -78,7 +78,7 @@ class study:
     
     def update_beta(self,features):
         
-        self.beta =np.array([  0.05,  -0.1,  0.1,  0.3, -0.35])
+        self.beta =np.array([  0.05,  -0.1,  0.1,  0.3, -0.3])
         
         potential_features = ['intercept','tod','dow','pretreatment','location']
         new = np.array([self.beta[0]]+[self.beta[i] for i in range(len(self.beta)) if potential_features[i] in features])
@@ -139,7 +139,7 @@ class study:
                 #this_beta[2] = .35
                 beta_regret = this_beta
                 #this_beta = [.35,.2,.15,.1,0.05,0.0,-.1,-.2,-.3,-.4,-.5,-.6]+this_beta[1:]
-                this_beta = [.15,.05,-.1,-.2,-.3,-.45]+this_beta[1:]
+                this_beta = [.15,.05,0.0,-.2,-.3,-.45]+this_beta[1:]
                 
             person = participant.participant(pid=k,gid=gid,times=v,decision_times = self.person_to_decision_times[k],Z=Z,rg=rg,beta=np.array(this_beta),beta_regret = beta_regret)
      
