@@ -142,7 +142,7 @@ def make_to_save(exp):
         return to_save
 
 def get_week_vec(current_day_counter):
-    return [int(int(current_day_counter/(7))==(i-1)) for i in range(1,7)]
+    return [int(int(current_day_counter/(7))==(i-1)) for i in range(1,8)]
 
 def new_kind_of_simulation(experiment,policy=None,personal_policy_params=None,global_policy_params=None,generative_functions=None,which_gen=None,feat_trans = None,algo_type = None,case=None,sim_num=None,train_type='None'):
     experiment.last_update_day=experiment.study_days[0]
