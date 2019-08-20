@@ -259,6 +259,7 @@ def new_kind_of_simulation(experiment,policy=None,personal_policy_params=None,gl
                         optimal_reward = get_optimal_reward(participant.beta_regret,calc_regret,participant.Z)
                         other_reward = get_optimal_reward(participant.beta,calc,participant.Z)
                         optimal_action = int(optimal_reward>0)
+                        other_action= int(other_reward>0)
                     else:
                         steps = feat_trans.get_steps_no_action(participant.gid,tod,dow,location,\
                         pretreatment,weather,seed = participant.rando_gen)
@@ -277,7 +278,7 @@ def new_kind_of_simulation(experiment,policy=None,personal_policy_params=None,gl
                 'dow':dow,'tod':tod,'weather':weather,\
                     'pretreatment':feat_trans.get_pretreatment(steps_last_time_period),\
                         'optimal_reward':optimal_reward,'optimal_action':optimal_action,\
-                            'mu2':global_policy_params.mus2,'gid':participant.gid,'calc':calc,'calcr':calc_regret,'other_reward':other_reward}
+                            'mu2':global_policy_params.mus2,'gid':participant.gid,'calc':calc,'calcr':calc_regret,'other_action':other_action,'other_reward':other_reward}
 
                 participant.history[time]=context_dict
 
@@ -302,7 +303,7 @@ def get_regret(experiment):
                 if data['optimal_action']!=-1:
                     optimal_actions[key].append(int(data['action']==data['optimal_action']))
                     regret = int(data['action']!=data['optimal_action'])*(abs(data['optimal_reward']))
-                    oregret = int(data['action']!=data['optimal_action'])*(abs(data['other_reward']))
+                    oregret = int(data['action']!=data['other_action'])*(abs(data['other_reward']))
                     rewards[key].append(regret)
                     other_regrets[key].append(oregret)
                     actions[key].append(data['action'])
@@ -327,7 +328,7 @@ def get_regret_person_specific(experiment):
                     #actions[key].append(data['action'])
                     rewards[pid][time]=regret
 
-                    oregret = int(data['action']!=data['optimal_action'])*(abs(data['other_reward']))
+                    oregret = int(data['action']!=data['other_action'])*(abs(data['other_reward']))
           
                     other_regrets[pid][key]=oregret
 
