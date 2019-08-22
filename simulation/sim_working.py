@@ -363,7 +363,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
             
             for sim in range(sim_start,sim_end):
                 
-                experiment = study.study(dist_root,pop_size,'_short_unstaggered_12n',which_gen=case,sim_number=sim,pop_number=pn,time_condition=time_cond)
+                experiment = study.study(dist_root,pop_size,'_short_unstaggered_12rn',which_gen=case,sim_number=sim,pop_number=pn,time_condition=time_cond)
                 #experiment.update_beta(set(responsivity_keys))
                
                 psi = []
