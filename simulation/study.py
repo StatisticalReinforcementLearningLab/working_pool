@@ -62,9 +62,9 @@ class study:
         self.update_minute = 30
         self.last_update_day = study_days[0]
         self.study_length=study_length
-        self.Z_one =0.0
+        self.Z_one =0.1
         #,35
-        self.Z_two =-0.4
+        self.Z_two =-0.2
 
         self.sigma =.35
             #.45
@@ -119,7 +119,7 @@ class study:
          #this_beta = [i for i in [  0.05,  0.25,  0.25,  -0.3, 0.25]]
          #this_beta = [0.05,  0.25,  0.2,  -.1, -.35]
          #this_beta=[0.05,  -0.1,  0.1,  0.3, -0.35]
-            this_beta=[0.05,  0.1,  0.2,  0.3, -0.3 ]
+            this_beta=[0.05,  -0.2,  0.2,  0.25, -0.3 ]
             if location:
                 if which_gen=='case_two':
                     offset = .1
@@ -140,7 +140,7 @@ class study:
                 beta_regret = this_beta
                 #this_beta = [.35,.2,.15,.1,0.05,0.0,-.1,-.2,-.3,-.4,-.5,-.6]+this_beta[1:]
                 #short good:[.2,.1,0.00,-0.05,-.15,-.25]
-                this_beta = [.23,.15,.08,0.03,0.0,-0.05,-0.1,-0.15,-.2,-.25,-.3,-.35]+this_beta[1:]
+                this_beta = [.23,.15,.8,0.03,0.0,0.05,-0.01,-0.05,-.1,-.15,-.25,-.35]+this_beta[1:]
                 
             person = participant.participant(pid=k,gid=gid,times=v,decision_times = self.person_to_decision_times[k],Z=Z,rg=rg,beta=np.array(this_beta),beta_regret = beta_regret)
      
