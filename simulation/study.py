@@ -62,9 +62,9 @@ class study:
         self.update_minute = 30
         self.last_update_day = study_days[0]
         self.study_length=study_length
-        self.Z_one =0.1
+        self.Z_one =0.15
         #,35
-        self.Z_two =-0.2
+        self.Z_two =-0.25
 
         self.sigma =.35
             #.45
