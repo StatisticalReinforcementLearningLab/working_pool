@@ -382,9 +382,9 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 per_rewards,perregrets = get_regret_person_specific(experiment)
                 gids = make_to_groupids(experiment)
                 
-                #return experiment,glob,personal
+                return experiment,glob,personal
 
-                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_{}825basemtreatd7_cond{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,time_cond,cend)
+                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_{}825basemtreatcheck_cond{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,time_cond,cend)
                 with open(filename,'wb') as f:
                     pickle.dump({'gids':gids,'regrets':rewards,'oregrets':other_regrets,'actions':actions,'pregret':per_rewards,'poregret':perregrets,'history':to_save,'pprams':personal,'gparams':glob.mus2},f)
       

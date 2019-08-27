@@ -140,7 +140,7 @@ class study:
                 beta_regret = this_beta
                 #this_beta = [.35,.2,.15,.1,0.05,0.0,-.1,-.2,-.3,-.4,-.5,-.6]+this_beta[1:]
                 #short good:[.2,.1,0.00,-0.05,-.15,-.25]
-                this_beta = [.3,.25,.15,.1,0.05,0.0,-0.05,-0.1,-0.15,-.2,-.25,-.3]+this_beta[1:]
+                this_beta = [0.3 ,  0.25,  0.15,  0.1 ,  0.05,  0.  , -0.05, -0.1 , -0.2,-0.25 , -0.35, -0.4 ]+this_beta[1:]
                 
             person = participant.participant(pid=k,gid=gid,times=v,decision_times = self.person_to_decision_times[k],Z=Z,rg=rg,beta=np.array(this_beta),beta_regret = beta_regret)
      
