@@ -97,9 +97,9 @@ class TS_global_params:
     def init_hob_params(self,hob_params,experiment):
         degree  = hob_params['degree']
         num_people = len(experiment.population)
-        adjacency = np.eye(num_people)
+        adjacency = 10*np.eye(num_people)
         other_degree = degree -.4
-        
+        #print(adjacency.shape)
         
         
         if other_degree<=0:
@@ -125,13 +125,32 @@ class TS_global_params:
                     
                     if self.case=='case_two':
                         mult = int(self.correct)
-                        adjacency[i][j]=mult * int(experiment.population[j].gid==experiment.population[i].gid )+(1-mult)*int(experiment.population[j].gid!=experiment.population[i].gid )
+                        
+                        if mult:
+                            term = 5*int(experiment.population[j].gid==experiment.population[i].gid )
+                        else:
+                            term = 100*int(experiment.population[j].gid!=experiment.population[i].gid )
+                        adjacency[i][j]=term
+                            #mult *degree* int(experiment.population[j].gid==experiment.population[i].gid )+(1-mult)*int(experiment.population[j].gid!=experiment.population[i].gid )
                     elif self.case=='case_three':
                         mult = int(self.correct)
-                        adjacency[i][j]=mult * int((test>0 and testtwo>0)or(test<0 and testtwo<0) )+(1-mult)*int((test>0 and testtwo<0)or(test<0 and testtwo>0) )
+                        if mult:
+                            term = 5*int((test>0 and testtwo>0)or(test<0 and testtwo<0) )
+                        else:
+                            term = 100*int((test>0 and testtwo<0)or(test<0 and testtwo>0) )
+                        
+                        adjacency[i][j]=term
+#mult *degree* int((test>0 and testtwo>0)or(test<0 and testtwo<0) )+(1-mult)*int((test>0 and testtwo<0)or(test<0 and testtwo>0) )
                     elif self.case=='case_one':
-                        adjacency[i][j]=1.0*degree
-        
+                        #print(self.correct)
+                        
+                        mult = int(self.correct)
+                        #print(mult)
+                        adjacency[i][j]=(mult*degree)
+                            
+                            #int(experiment.population[j].gid==experiment.population[i].gid )+(1-mult+degree)*int(experiment.population[j].gid!=experiment.population[i].gid )
+#print(adjacency)
+                            #*degree
         self.adjacency = adjacency
         self.L = laplacian(adjacency,normed=True)+np.eye(num_people)
             #self.S =
