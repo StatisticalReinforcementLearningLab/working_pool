@@ -62,11 +62,11 @@ class study:
         self.update_minute = 30
         self.last_update_day = study_days[0]
         self.study_length=study_length
-        self.Z_one =0.05
+        self.Z_one =0.0
         #,35
-        self.Z_two =-0.15
+        self.Z_two =-0.2
 
-        self.sigma =.3
+        self.sigma =.35
             #.45
 
     
@@ -119,7 +119,7 @@ class study:
          #this_beta = [i for i in [  0.05,  0.25,  0.25,  -0.3, 0.25]]
          #this_beta = [0.05,  0.25,  0.2,  -.1, -.35]
          #this_beta=[0.05,  -0.1,  0.1,  0.3, -0.35]
-            this_beta=[0.05,  -0.2,  0.2,  0.25, -0.25  ]
+            this_beta=[0.05,  -0.15,  0.2,  0.3, -0.3   ]
             if location:
                 if which_gen=='case_two':
                     offset = .1
