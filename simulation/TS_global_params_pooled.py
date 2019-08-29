@@ -23,7 +23,7 @@ class TS_global_params:
         self.correct = correct
         self.beta_updates = None
         self.beta_factor = None
-
+        self.called = 0
         self.responsivity_keys = responsivity_keys
         self.num_baseline_features = len(baseline_features)
         self.psi_features = psi_features
@@ -129,7 +129,7 @@ class TS_global_params:
                         if mult:
                             term = 5*int(experiment.population[j].gid==experiment.population[i].gid )
                         else:
-                            term = 0.5*int(experiment.population[j].gid==experiment.population[i].gid )+1*int(experiment.population[j].gid!=experiment.population[i].gid )
+                            term = 4.0*int(experiment.population[j].gid==experiment.population[i].gid )+5*int(experiment.population[j].gid!=experiment.population[i].gid )
                         adjacency[i][j]=term
                             #mult *degree* int(experiment.population[j].gid==experiment.population[i].gid )+(1-mult)*int(experiment.population[j].gid!=experiment.population[i].gid )
                     elif self.case=='case_three':
@@ -137,7 +137,7 @@ class TS_global_params:
                         if mult:
                             term = 5*int((test>0 and testtwo>0)or(test<0 and testtwo<0) )
                         else:
-                            term =0.5*int((test>0 and testtwo>0)or(test<0 and testtwo<0) )+1.0*int((test>0 and testtwo<0)or(test<0 and testtwo>0) )
+                            term =4.0*int((test>0 and testtwo>0)or(test<0 and testtwo<0) )+5.0*int((test>0 and testtwo<0)or(test<0 and testtwo>0) )
                         
                         adjacency[i][j]=term
 #mult *degree* int((test>0 and testtwo>0)or(test<0 and testtwo<0) )+(1-mult)*int((test>0 and testtwo<0)or(test<0 and testtwo>0) )

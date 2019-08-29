@@ -203,7 +203,7 @@ def update(algo_type,train_type,experiment,time,global_policy_params,personal_po
                 
             if temp_params['cov'] is not None:
                     global_policy_params.update_params_more(temp_params)
-
+                    global_policy_params.called=global_policy_params.called+1
         except Exception as e:
             print(e)
             temp_params={'cov':global_policy_params.cov,\
