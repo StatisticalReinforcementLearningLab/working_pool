@@ -142,7 +142,7 @@ def make_to_save(exp):
         return to_save
 
 def get_week_vec(current_day_counter):
-    return [int(int(current_day_counter/(7))==(i-1)) for i in range(1,13)]
+    return [int(int(current_day_counter/(7))==(i-1)) for i in range(1,11)]
 
 def new_kind_of_simulation(experiment,policy=None,personal_policy_params=None,global_policy_params=None,generative_functions=None,which_gen=None,feat_trans = None,algo_type = None,case=None,sim_num=None,train_type='None'):
     experiment.last_update_day=experiment.study_days[0]
@@ -278,7 +278,7 @@ def new_kind_of_simulation(experiment,policy=None,personal_policy_params=None,gl
                 'dow':dow,'tod':tod,'weather':weather,\
                     'pretreatment':feat_trans.get_pretreatment(steps_last_time_period),\
                         'optimal_reward':optimal_reward,'optimal_action':optimal_action,\
-                            'mu2':global_policy_params.mus2,'gid':participant.gid,'calc':calc,'calcr':calc_regret,'other_action':other_action,'other_reward':other_reward}
+                            'mu2':personal_policy_params.mus2[participant.pid],'gid':participant.gid,'calc':calc,'calcr':calc_regret,'other_action':other_action,'other_reward':other_reward}
 
                 participant.history[time]=context_dict
 
@@ -363,7 +363,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
             
             for sim in range(sim_start,sim_end):
                 
-                experiment = study.study(dist_root,pop_size,'_short_staggered_12rn',which_gen=case,sim_number=sim,pop_number=pn,time_condition=time_cond)
+                experiment = study.study(dist_root,pop_size,'_short_staggered_10rn',which_gen=case,sim_number=sim,pop_number=pn,time_condition=time_cond)
                 #experiment.update_beta(set(responsivity_keys))
                
                 psi = []
@@ -384,7 +384,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 
                 #return experiment,glob,personal
 
-                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_{}829quick_cond{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,time_cond,cend)
+                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_{}829quick2_cond{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,time_cond,cend)
                 with open(filename,'wb') as f:
                     pickle.dump({'gids':gids,'regrets':rewards,'oregrets':other_regrets,'actions':actions,'pregret':per_rewards,'poregret':perregrets,'history':to_save,'pprams':personal,'gparams':glob.mus2},f)
       
