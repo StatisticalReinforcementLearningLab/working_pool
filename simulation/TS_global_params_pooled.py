@@ -129,7 +129,7 @@ class TS_global_params:
                         if mult:
                             term = 5*int(experiment.population[j].gid==experiment.population[i].gid )+1*int(experiment.population[j].gid!=experiment.population[i].gid )
                         else:
-                            term = 1.0*int(experiment.population[j].gid==experiment.population[i].gid )+5*int(experiment.population[j].gid!=experiment.population[i].gid )
+                            term = 1.0*int(experiment.population[j].gid==experiment.population[i].gid )+0.5*int(experiment.population[j].gid!=experiment.population[i].gid )
                         adjacency[i][j]=term
                             #mult *degree* int(experiment.population[j].gid==experiment.population[i].gid )+(1-mult)*int(experiment.population[j].gid!=experiment.population[i].gid )
                     elif self.case=='case_three':
@@ -137,7 +137,7 @@ class TS_global_params:
                         if mult:
                             term = 5*int((test>0 and testtwo>0)or(test<0 and testtwo<0) )+1.0*int((test>0 and testtwo<0)or(test<0 and testtwo>0) )
                         else:
-                            term =1.0*int((test>0 and testtwo>0)or(test<0 and testtwo<0) )+5.0*int((test>0 and testtwo<0)or(test<0 and testtwo>0) )
+                            term =1.0*int((test>0 and testtwo>0)or(test<0 and testtwo<0) )+0.5*int((test>0 and testtwo<0)or(test<0 and testtwo>0) )
                         
                         adjacency[i][j]=term
 #mult *degree* int((test>0 and testtwo>0)or(test<0 and testtwo<0) )+(1-mult)*int((test>0 and testtwo<0)or(test<0 and testtwo>0) )
@@ -146,7 +146,8 @@ class TS_global_params:
                         
                         mult = int(self.correct)
                         #print(mult)
-                        adjacency[i][j]=(mult*degree)
+                        adjacency[i][j]=0.5
+                            #(mult*degree)
                             
                             #int(experiment.population[j].gid==experiment.population[i].gid )+(1-mult+degree)*int(experiment.population[j].gid!=experiment.population[i].gid )
 #print(adjacency)
