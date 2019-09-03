@@ -154,7 +154,8 @@ class feature_transformation:
             all_users = []
             all_steps = []
             all_days = []
-            
+            all_indices = {}
+            index = 0
             for h_i in history_lookups['base']:
                 vec = history_lookups['base'][h_i]
                 rvec = history_lookups['resp'][h_i]
@@ -174,8 +175,9 @@ class feature_transformation:
                 all_days.append(day)
                 all_steps.append(steps)
                 all_data.append(v)
-            
-            return np.array(all_data),np.array(all_users),np.array([[s] for s in all_steps]),np.array(all_days)
+                all_indices[h_i]=index
+                index = index+1
+            return np.array(all_data),np.array(all_users),np.array([[s] for s in all_steps]),np.array(all_days),all_indices
 
         def get_form_TS(self,history_lookups):
             keys = history_lookups['base'].keys()

@@ -363,7 +363,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
             
             for sim in range(sim_start,sim_end):
                 
-                experiment = study.study(dist_root,pop_size,'_short_unstaggered_10rn',which_gen=case,sim_number=sim,pop_number=pn,time_condition=time_cond)
+                experiment = study.study(dist_root,pop_size,'_short_staggered_10rn',which_gen=case,sim_number=sim,pop_number=pn,time_condition=time_cond)
                 #experiment.update_beta(set(responsivity_keys))
                
                 psi = []
@@ -377,6 +377,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 glob,personal = initialize_policy_params_TS(experiment,u,standardize=False,baseline_features=baseline,psi_features=psi,responsivity_keys=responsivity_keys,algo_type =algo_type,hob_params={'degree':degree},case=case,correct=correct)
                 glob.sim_number=sim
                 hist = new_kind_of_simulation(experiment,'TS',personal,glob,feat_trans=feat_trans,algo_type=algo_type,case=case,sim_num=sim,train_type=train_type)
+                #return hist
                 to_save = make_to_save(experiment)
                 actions,rewards,other_regrets = get_regret(experiment)
                 per_rewards,perregrets = get_regret_person_specific(experiment)
@@ -384,7 +385,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 
                 #return experiment,glob,personal
 
-                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_{}92unstaggered_cond{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,time_cond,cend)
+                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_{}92unstaggeredt_cond{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,time_cond,cend)
                 with open(filename,'wb') as f:
                     pickle.dump({'gids':gids,'regrets':rewards,'oregrets':other_regrets,'actions':actions,'pregret':per_rewards,'poregret':perregrets,'history':to_save,'pprams':personal,'gparams':glob.mus2},f)
       

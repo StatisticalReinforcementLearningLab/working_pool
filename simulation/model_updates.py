@@ -22,6 +22,7 @@ import tensorflow as tf
 import gc
 import feature_transformations as ft
 import run_hob
+import run_gpytorchkernel_timevarying
 
 
 def update(algo_type,train_type,experiment,time,global_policy_params,personal_policy_params,feat_trans,participant=None):
@@ -204,6 +205,7 @@ def update(algo_type,train_type,experiment,time,global_policy_params,personal_po
             if temp_params['cov'] is not None:
                     global_policy_params.update_params_more(temp_params)
                     global_policy_params.called=global_policy_params.called+1
+    
         except Exception as e:
             print(e)
             temp_params={'cov':global_policy_params.cov,\
@@ -231,11 +233,96 @@ def update(algo_type,train_type,experiment,time,global_policy_params,personal_po
         #rhos = np.array([[feat_trans.rbf_custom_np( rdayone[i], X2=rdaytwo[j]) for j in range(len(X))] for i in range(len(X))])
         
     
+    elif algo_type=='time_comp':
+        temp_hist = feat_trans.get_history_decision_time_avail(experiment,time)
+        temp_hist= feat_trans.history_semi_continuous(temp_hist,global_policy_params)
+        context,steps,probs,actions= feat_trans.get_form_TS(temp_hist)
+        
+        
+        temp_data = feat_trans.get_phi_from_history_lookups(temp_hist)
+        mri = get_most_recent_index(temp_data[1],temp_data[3])
+    
+        steps = feat_trans.get_RT(temp_data[2],temp_data[0],global_policy_params.mu_theta,global_policy_params.theta_dim)
+    
+        temp_params = run_gpytorchkernel_timevarying.run(temp_data[0], temp_data[1],temp_data[3],steps,global_policy_params)
+        first_mat = get_first_mat(np.eye(len(global_policy_params.baseline_indices)),temp_data[0],global_policy_params.baseline_indices)
+        Dt = get_Dt(temp_data[3],global_policy_params)
+        fp = np.dot(first_mat.T,Dt)
+        mu = get_mu_tv(global_policy_params,temp_params,fp,steps)[-(global_policy_params.num_responsivity_features+1):]
 
+        sigma =get_sigma_tv(global_policy_params,temp_params,fp,steps)
+        Sigma = [j[-(global_policy_params.num_responsivity_features+1):] for j in sigma[-(global_policy_params.num_responsivity_features+1):]]
+#print(Sigma.shape)
+       
+        #[j[-(global_policy_params.num_responsivity_features+1):] for j in sigma[-(global_policy_params.num_responsivity_features+1):]]
 
+        #print('fp')
+#print(fp.shape)
+        for participant in experiment.population.values():
+            if time==participant.last_update_day+pd.DateOffset(days=global_policy_params.update_period):
+                #my_vec = first_mat[mri[participant.pid]]
+                #my_steps = steps[mri[participant.pid]]
+                personal_policy_params.update_mus(participant.pid,mu,2)
+                personal_policy_params.update_sigmas(participant.pid,Sigma,2)
+                
+                participant.last_update_day=time
     else:
         return 'Excepted types are batch, pooled, personalized, pooled_four, hob,hob_clipped, or time_effects'
 
+def get_most_recent_index(users,days):
+    maxes = {}
+    for i in range(len(users)):
+        user_id = users[i]
+        if user_id not in maxes:
+            maxes[user_id] = 0
+        if days[i]>days[maxes[user_id]]:
+            maxes[user_id]=i
+    return maxes
+
+def get_first_mat(sigma_theta,data,baseline_indices):
+    new_data = data[:,[baseline_indices]].reshape((data.shape[0],data.shape[1]))
+    
+    new_data_two = data[:,[baseline_indices]].reshape((data.shape[0],data.shape[1]))
+    result = np.dot(new_data,sigma_theta)
+    
+    #results = np.dot(result,new_data_two.T)
+    return result
+
+
+def get_first_part(kt,dt):
+    pass
+
+def get_Dt(days,glob):
+    
+    to_return = []
+    for i in range(len(days)):
+        temp = []
+        
+        temp=[(1-glob.time_eps)**abs(days[i]-days[j]) for j in range(len(days))]
+        to_return.append(temp)
+    return np.array(to_return)
+
+def get_mu_tv(glob,K,first_part,y):
+    
+    
+    middle_part = np.linalg.inv(K+glob.noise_term*np.eye(K.shape[0]))
+    #print(middle_part.shape)
+    # print(first_part.shape)
+    temp = np.dot(first_part,middle_part)
+    #print(temp.shape)
+    #print(np.dot(temp,y))
+    return np.dot(temp,y)
+
+def get_sigma_tv(glob,K,first_part,y):
+    
+    
+    middle_part = np.linalg.inv(K+glob.noise_term*np.eye(K.shape[0]))
+  
+    temp = np.dot(first_part,middle_part)
+    temp = np.dot(temp,first_part.T)
+    #print(temp.shape)
+    #print(np.dot(temp,y).shape)
+    return glob.sigma_theta-temp
 
 
 
