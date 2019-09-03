@@ -80,7 +80,7 @@ class MyKernel(Kernel):
 
         final = self.first_mat.mul(self.time_mat)
         
-        return self.first_mat
+        return final
 
 
 class GPRegressionModel(gpytorch.models.ExactGP):
@@ -146,7 +146,7 @@ def run(X,users,days,y,global_params):
                                   
     mll = gpytorch.mlls.ExactMarginalLogLikelihood(likelihood, model)
         #def train(num_iter):
-    num_iter = 5
+    num_iter = 1
         #if global_params.called>9:
         #num_iter=5
     with gpytorch.settings.use_toeplitz(False):
