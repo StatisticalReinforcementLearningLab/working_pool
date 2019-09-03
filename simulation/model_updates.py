@@ -240,19 +240,19 @@ def update(algo_type,train_type,experiment,time,global_policy_params,personal_po
             
             
             temp_data = feat_trans.get_phi_from_history_lookups(temp_hist)
-                mri = get_most_recent_index(temp_data[1],temp_data[3])
+            mri = get_most_recent_index(temp_data[1],temp_data[3])
                 
-                steps = feat_trans.get_RT(temp_data[2],temp_data[0],global_policy_params.mu_theta,global_policy_params.theta_dim)
+            steps = feat_trans.get_RT(temp_data[2],temp_data[0],global_policy_params.mu_theta,global_policy_params.theta_dim)
                 
-                temp_params,noise = run_gpytorchkernel_timevarying.run(temp_data[0], temp_data[1],temp_data[3],steps,global_policy_params)
+            temp_params,noise =run_gpytorchkernel_timevarying.run(temp_data[0], temp_data[1],temp_data[3],steps,global_policy_params)
                 global_policy_params.noise_term=noise
-                first_mat = get_first_mat(np.eye(len(global_policy_params.baseline_indices)),temp_data[0],global_policy_params.baseline_indices)
-                Dt = get_Dt(temp_data[3],global_policy_params)
-                fp = np.dot(first_mat.T,Dt)
-                mu = get_mu_tv(global_policy_params,temp_params,fp,steps)[-(global_policy_params.num_responsivity_features+1):]
+            first_mat = get_first_mat(np.eye(len(global_policy_params.baseline_indices)),temp_data[0],global_policy_params.baseline_indices)
+            Dt = get_Dt(temp_data[3],global_policy_params)
+            fp = np.dot(first_mat.T,Dt)
+            mu = get_mu_tv(global_policy_params,temp_params,fp,steps)[-(global_policy_params.num_responsivity_features+1):]
                 #mu = mu+global_policy_params.mu2
-                sigma =get_sigma_tv(global_policy_params,temp_params,fp,steps)
-                Sigma = [j[-(global_policy_params.num_responsivity_features+1):] for j in sigma[-(global_policy_params.num_responsivity_features+1):]]
+            sigma =get_sigma_tv(global_policy_params,temp_params,fp,steps)
+            Sigma = [j[-(global_policy_params.num_responsivity_features+1):] for j in sigma[-(global_policy_params.num_responsivity_features+1):]]
 #print(Sigma.shape)
 
         #[j[-(global_policy_params.num_responsivity_features+1):] for j in sigma[-(global_policy_params.num_responsivity_features+1):]]
