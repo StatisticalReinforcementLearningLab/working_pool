@@ -128,8 +128,8 @@ def run(X,users,days,y,global_params):
   
     user_mat = torch.from_numpy(user_mat).float()
     time_mat = torch.from_numpy(time_mat).float()
-    print(time_mat.shape)
-    print(first_mat.shape)
+    #print(time_mat.shape)
+    #print(first_mat.shape)
   
     model = GPRegressionModel(X, y, likelihood,user_mat,time_mat,first_mat,global_params)
     
@@ -146,7 +146,7 @@ def run(X,users,days,y,global_params):
                                   
     mll = gpytorch.mlls.ExactMarginalLogLikelihood(likelihood, model)
         #def train(num_iter):
-    num_iter = 15
+    num_iter = 5
         #if global_params.called>9:
         #num_iter=5
     with gpytorch.settings.use_toeplitz(False):

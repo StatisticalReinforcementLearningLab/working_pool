@@ -234,32 +234,33 @@ def update(algo_type,train_type,experiment,time,global_policy_params,personal_po
         
     
     elif algo_type=='time_comp':
-        temp_hist = feat_trans.get_history_decision_time_avail(experiment,time)
-        temp_hist= feat_trans.history_semi_continuous(temp_hist,global_policy_params)
-        context,steps,probs,actions= feat_trans.get_form_TS(temp_hist)
-        
-        
-        temp_data = feat_trans.get_phi_from_history_lookups(temp_hist)
-        mri = get_most_recent_index(temp_data[1],temp_data[3])
-    
-        steps = feat_trans.get_RT(temp_data[2],temp_data[0],global_policy_params.mu_theta,global_policy_params.theta_dim)
-    
-        temp_params = run_gpytorchkernel_timevarying.run(temp_data[0], temp_data[1],temp_data[3],steps,global_policy_params)
-        first_mat = get_first_mat(np.eye(len(global_policy_params.baseline_indices)),temp_data[0],global_policy_params.baseline_indices)
-        Dt = get_Dt(temp_data[3],global_policy_params)
-        fp = np.dot(first_mat.T,Dt)
-        mu = get_mu_tv(global_policy_params,temp_params,fp,steps)[-(global_policy_params.num_responsivity_features+1):]
 
-        sigma =get_sigma_tv(global_policy_params,temp_params,fp,steps)
-        Sigma = [j[-(global_policy_params.num_responsivity_features+1):] for j in sigma[-(global_policy_params.num_responsivity_features+1):]]
 #print(Sigma.shape)
-       
+
         #[j[-(global_policy_params.num_responsivity_features+1):] for j in sigma[-(global_policy_params.num_responsivity_features+1):]]
 
         #print('fp')
 #print(fp.shape)
         for participant in experiment.population.values():
             if time==participant.last_update_day+pd.DateOffset(days=global_policy_params.update_period):
+                temp_hist = feat_trans.get_history_decision_time_avail_single({participant.pid:participant.history},time)
+                temp_hist= feat_trans.history_semi_continuous(temp_hist,global_policy_params)
+                context,steps,probs,actions= feat_trans.get_form_TS(temp_hist)
+        
+        
+                temp_data = feat_trans.get_phi_from_history_lookups(temp_hist)
+                mri = get_most_recent_index(temp_data[1],temp_data[3])
+        
+                steps = feat_trans.get_RT(temp_data[2],temp_data[0],global_policy_params.mu_theta,global_policy_params.theta_dim)
+        
+                temp_params = run_gpytorchkernel_timevarying.run(temp_data[0], temp_data[1],temp_data[3],steps,global_policy_params)
+                first_mat = get_first_mat(np.eye(len(global_policy_params.baseline_indices)),temp_data[0],global_policy_params.baseline_indices)
+                Dt = get_Dt(temp_data[3],global_policy_params)
+                fp = np.dot(first_mat.T,Dt)
+                mu = get_mu_tv(global_policy_params,temp_params,fp,steps)[-(global_policy_params.num_responsivity_features+1):]
+        
+                sigma =get_sigma_tv(global_policy_params,temp_params,fp,steps)
+                Sigma = [j[-(global_policy_params.num_responsivity_features+1):] for j in sigma[-(global_policy_params.num_responsivity_features+1):]]
                 #my_vec = first_mat[mri[participant.pid]]
                 #my_steps = steps[mri[participant.pid]]
                 personal_policy_params.update_mus(participant.pid,mu,2)
@@ -298,7 +299,7 @@ def get_Dt(days,glob):
     for i in range(len(days)):
         temp = []
         
-        temp=[(1-glob.time_eps)**abs(days[i]-days[j]) for j in range(len(days))]
+        temp=[(1-glob.time_eps)**abs(days[i]-days[j])**.5 for j in range(len(days))]
         to_return.append(temp)
     return np.array(to_return)
 
