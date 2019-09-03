@@ -354,7 +354,8 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
         
         
         u = update_time
-        for pn in range(1):
+        pn=1
+        for epsilon in [0.01,0.001,0.05]:
             
             all_actions = {}
             all_rewards = {}
@@ -376,16 +377,17 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                     degree=0.01
                 glob,personal = initialize_policy_params_TS(experiment,u,standardize=False,baseline_features=baseline,psi_features=psi,responsivity_keys=responsivity_keys,algo_type =algo_type,hob_params={'degree':degree},case=case,correct=correct)
                 glob.sim_number=sim
+                glob.time_eps = epsilon
                 hist = new_kind_of_simulation(experiment,'TS',personal,glob,feat_trans=feat_trans,algo_type=algo_type,case=case,sim_num=sim,train_type=train_type)
                 #return hist
                 to_save = make_to_save(experiment)
                 actions,rewards,other_regrets = get_regret(experiment)
                 per_rewards,perregrets = get_regret_person_specific(experiment)
                 gids = make_to_groupids(experiment)
-                
+                eps = '_eps_{}'.format(epsilon)
                 #return experiment,glob,personal
 
-                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_{}92unstaggeredt_cond{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,time_cond,cend)
+                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_{}92unstaggeredt_cond{}{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,time_cond,cend,eps)
                 with open(filename,'wb') as f:
                     pickle.dump({'gids':gids,'regrets':rewards,'oregrets':other_regrets,'actions':actions,'pregret':per_rewards,'poregret':perregrets,'history':to_save,'pprams':personal,'gparams':glob.mus2},f)
       
