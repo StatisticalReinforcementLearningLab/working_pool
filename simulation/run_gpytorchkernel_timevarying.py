@@ -178,7 +178,7 @@ def run(X,users,days,y,global_params):
                     print('here')
                     break
 #train(50)
-    return cov
+    return cov,noise
 
 
     

@@ -253,12 +253,13 @@ def update(algo_type,train_type,experiment,time,global_policy_params,personal_po
         
                 steps = feat_trans.get_RT(temp_data[2],temp_data[0],global_policy_params.mu_theta,global_policy_params.theta_dim)
         
-                temp_params = run_gpytorchkernel_timevarying.run(temp_data[0], temp_data[1],temp_data[3],steps,global_policy_params)
+                temp_params,noise = run_gpytorchkernel_timevarying.run(temp_data[0], temp_data[1],temp_data[3],steps,global_policy_params)
+                global_policy_params.noise_term=noise
                 first_mat = get_first_mat(np.eye(len(global_policy_params.baseline_indices)),temp_data[0],global_policy_params.baseline_indices)
                 Dt = get_Dt(temp_data[3],global_policy_params)
                 fp = np.dot(first_mat.T,Dt)
                 mu = get_mu_tv(global_policy_params,temp_params,fp,steps)[-(global_policy_params.num_responsivity_features+1):]
-        
+                #mu = mu+global_policy_params.mu2
                 sigma =get_sigma_tv(global_policy_params,temp_params,fp,steps)
                 Sigma = [j[-(global_policy_params.num_responsivity_features+1):] for j in sigma[-(global_policy_params.num_responsivity_features+1):]]
                 #my_vec = first_mat[mri[participant.pid]]
@@ -306,21 +307,21 @@ def get_Dt(days,glob):
 def get_mu_tv(glob,K,first_part,y):
     
     
-    middle_part = np.linalg.inv(K+glob.noise_term*np.eye(K.shape[0]))
+    middle_part = np.linalg.inv(np.add(K,glob.noise_term*np.eye(K.shape[0])))
     #print(middle_part.shape)
     # print(first_part.shape)
-    temp = np.dot(first_part,middle_part)
+    temp = np.matmul(first_part,middle_part)
     #print(temp.shape)
     #print(np.dot(temp,y))
-    return np.dot(temp,y)
+    return np.add(glob.mu_theta,np.matmul(temp,y))
 
 def get_sigma_tv(glob,K,first_part,y):
     
     
-    middle_part = np.linalg.inv(K+glob.noise_term*np.eye(K.shape[0]))
+    middle_part = np.linalg.inv(np.add(K,glob.noise_term*np.eye(K.shape[0])))
   
-    temp = np.dot(first_part,middle_part)
-    temp = np.dot(temp,first_part.T)
+    temp = np.matmul(first_part,middle_part)
+    temp = np.matmul(temp,first_part.T)
     #print(temp.shape)
     #print(np.dot(temp,y).shape)
     return glob.sigma_theta-temp
