@@ -355,7 +355,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
         
         u = update_time
         pn=1
-        for epsilon in [0.001,.1]:
+        for epsilon in [0.01]:
             
             all_actions = {}
             all_rewards = {}
@@ -387,7 +387,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 eps = '_eps_{}'.format(epsilon)
                 #return experiment,glob,personal
 
-                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_{}92unstaggeredtperf_cond{}{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,time_cond,cend,eps)
+                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_{}92unstaggered_compl_cond{}{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,time_cond,cend,eps)
                 with open(filename,'wb') as f:
                     pickle.dump({'gids':gids,'regrets':rewards,'oregrets':other_regrets,'actions':actions,'pregret':per_rewards,'poregret':perregrets,'history':to_save,'pprams':personal,'gparams':glob.mus2},f)
       
