@@ -80,7 +80,7 @@ class MyKernel(Kernel):
 
         final = self.first_mat.mul(self.time_mat)
         
-        return final
+        return self.first_mat
 
 
 class GPRegressionModel(gpytorch.models.ExactGP):
