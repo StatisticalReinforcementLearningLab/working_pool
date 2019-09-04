@@ -25,6 +25,7 @@ class TS_global_params:
         self.beta_factor = None
         self.called = 0
         self.time_eps = .01
+        self.ls={}
         self.responsivity_keys = responsivity_keys
         self.num_baseline_features = len(baseline_features)
         self.psi_features = psi_features

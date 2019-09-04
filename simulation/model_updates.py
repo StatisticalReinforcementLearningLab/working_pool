@@ -101,9 +101,9 @@ def update(algo_type,train_type,experiment,time,global_policy_params,personal_po
                     global_policy_params.update_params_more(temp_params)
                 inv_term = simple_bandits.get_inv_term(global_policy_params.cov,temp_data[0].shape[0],global_policy_params.noise_term)
                         
-                global_policy_params.inv_term=inv_term
+                global_policy_params.inv_term = inv_term
                         #print(temp_params)
-                global_policy_params.history =temp_data
+                global_policy_params.history = temp_data
             except Exception as e:
                 print('something failed')
                 print(e)
@@ -270,19 +270,22 @@ def update(algo_type,train_type,experiment,time,global_policy_params,personal_po
                 temp_hist= feat_trans.history_semi_continuous(temp_hist,global_policy_params)
                 context,steps,probs,actions= feat_trans.get_form_TS(temp_hist)
         
-        
+   
                 temp_data = feat_trans.get_phi_from_history_lookups(temp_hist)
                 mri = get_most_recent_index(temp_data[1],temp_data[3])
         
                 steps = feat_trans.get_RT(temp_data[2],temp_data[0],global_policy_params.mu_theta,global_policy_params.theta_dim)
-
-                temp_params,noise=run_gpytorchkernel_timevarying.run(temp_data[0], temp_data[1],temp_data[3],steps,global_policy_params)
-                global_policy_params.noise_term=noise
-                global_policy_params.cov=temp_params
-        
-        
-                first_mat = get_first_mat(np.eye(len(global_policy_params.baseline_indices)),temp_data[0],global_policy_params.baseline_indices)
                 Dt = get_Dt(temp_data[3],global_policy_params)
+             
+                temp_params,noise,lenscale=run_gpytorchkernel_timevarying.run(temp_data[0], temp_data[1],temp_data[3],steps,global_policy_params,global_policy_params.ls[participant.pid])
+                global_policy_params.noise_term=noise
+                Dt = get_Dt(temp_data[3],global_policy_params)
+                
+                global_policy_params.cov=np.multiply(temp_params,Dt)
+                global_policy_params.ls[participant.pid]=lenscale
+                
+                first_mat = get_first_mat(np.eye(len(global_policy_params.baseline_indices)),temp_data[0],global_policy_params.baseline_indices)
+
                 fp = np.dot(first_mat.T,Dt)
                 mu = get_mu_tv(global_policy_params,temp_params,fp,steps)[-(global_policy_params.num_responsivity_features+1):]
         #mu = mu+global_policy_params.mu2

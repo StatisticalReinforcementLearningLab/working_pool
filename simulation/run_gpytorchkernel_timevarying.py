@@ -85,7 +85,7 @@ class MyKernel(Kernel):
 
 
 class GPRegressionModel(gpytorch.models.ExactGP):
-    def __init__(self, train_x, train_y, likelihood,user_mat,time_mat,first_mat,gparams):
+    def __init__(self, train_x, train_y, likelihood,gparams):
         super(GPRegressionModel, self).__init__(train_x, train_y, likelihood)
         
         #uncomment important
@@ -112,7 +112,7 @@ class GPRegressionModel(gpytorch.models.ExactGP):
 
 
 
-def run(X,users,days,y,global_params):
+def run(X,users,days,y,global_params,lenscale):
     #initial_u1,initial_u2,initial_rho,initial_noise,baseline_indices,psi_indices,user_index
     torch.manual_seed(1e6)
     user_mat= get_users(users,users)
@@ -120,7 +120,7 @@ def run(X,users,days,y,global_params):
     #print(user_mat.shape)
     #print(X.shape)
     #print(global_params.baseline_indices)
-    first_mat = get_first_mat(np.eye(len(global_params.baseline_indices)),X,global_params.baseline_indices)
+    #first_mat = get_first_mat(np.eye(len(global_params.baseline_indices)),X,global_params.baseline_indices)
     #print(first_mat.shape)
     
     likelihood = gpytorch.likelihoods.GaussianLikelihood()
@@ -130,15 +130,15 @@ def run(X,users,days,y,global_params):
     X = torch.from_numpy(np.array(X)).float()
     y = torch.from_numpy(y).float()
     #print(X.size())
-    first_mat = torch.from_numpy(first_mat).float()
+    #first_mat = torch.from_numpy(first_mat).float()
   
-    user_mat = torch.from_numpy(user_mat).float()
-    time_mat = torch.from_numpy(time_mat).float()
+  #user_mat = torch.from_numpy(user_mat).float()
+  #time_mat = torch.from_numpy(time_mat).float()
     #print(time_mat.shape)
     #print(first_mat.shape)
   
-    model = GPRegressionModel(X, y, likelihood,user_mat,time_mat,first_mat,global_params)
-    
+    model = GPRegressionModel(X, y, likelihood,global_params)
+    model.covar_module.base_kernel.lengthscale =lenscale
     model.train()
     likelihood.train()
     sigma_u=None
@@ -183,8 +183,9 @@ def run(X,users,days,y,global_params):
                     print(e)
                     print('here')
                     break
+                        #print(model.covar_module.base_kernel.lengthscale.item())
 #train(50)
-    return cov,noise
+    return cov,noise,model.covar_module.base_kernel.lengthscale.item()
 
 
     

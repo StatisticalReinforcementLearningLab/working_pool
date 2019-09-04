@@ -48,6 +48,9 @@ def policy_update_ts(global_params,batch,  mu_1,Sigma_1,mu_2,Sigma_2):
 
 def policy_update_ts_new(context,steps,probs,actions,o_sigma,  mu_1,Sigma_1,mu_2,Sigma_2):
     return txt_effect_update_new(context,steps,probs,actions,o_sigma, mu_1,Sigma_1,mu_2,Sigma_2)
+def policy_update_ts_new_time(context,steps,probs,actions,o_sigma,  mu_1,Sigma_1,mu_2,Sigma_2,days):
+    return txt_effect_update_new_time(context,steps,probs,actions,o_sigma, mu_1,Sigma_1,mu_2,Sigma_2,days)
+
 
 
 def txt_effect_update_new(context,steps,probs,actions,o_sigma, mu_1,Sigma_1,mu_2,Sigma_2):
@@ -78,6 +81,38 @@ def txt_effect_update_new(context,steps,probs,actions,o_sigma, mu_1,Sigma_1,mu_2
         temp = post_cal_ts(X_trn, Y_trn, o_sigma, mu_tmp, Sigma_tmp)
         
       
+        nm,nS = clip_mean_sigma(temp[0],temp[1],len(mu_2))
+        
+        return [nm,nS]
+
+def txt_effect_update_new_time(context,steps,probs,actions,o_sigma, mu_1,Sigma_1,mu_2,Sigma_2,days):
+    
+    
+    if len(context)==0:
+        
+        return [mu_2,Sigma_2]
+    else:
+        
+        mu_tmp =[m for m in mu_1]
+        mu_tmp.extend([m for m in mu_2])
+        mu_tmp.extend([m for m in mu_2])
+        Sigma_tmp = block_diag(Sigma_1,Sigma_2,Sigma_2)
+        
+        
+        f_one = transform_f1_new(context)
+        f_two = transform_f2_new(context)
+        
+        
+        X_trn = context
+        
+        Y_trn = steps
+        
+        
+        
+        
+        temp = post_cal_ts_time(X_trn, Y_trn, o_sigma, mu_tmp, Sigma_tmp,days)
+        
+        
         nm,nS = clip_mean_sigma(temp[0],temp[1],len(mu_2))
         
         return [nm,nS]
@@ -140,6 +175,18 @@ def post_cal_ts(X, Y, sigma, mu, Sigma):
    
     term_one = np.dot(np.transpose(X),X)+sigma**2*inv_Sigma
     term_two = np.dot(np.transpose(X),Y)+np.dot(sigma**2*inv_Sigma,mu)
+    pos_mean = solve(term_one,term_two)
+    pos_var = solve_sigma(sigma,X,inv_Sigma)
+    return [pos_mean,pos_var]
+
+def post_cal_ts_time(X, Y, sigma, mu, Sigma,days):
+    
+    inv_Sigma = solve(Sigma,np.eye(len(Sigma[0])))
+    #xterm = np.multiply(np.dot(np.transpose(X),X,days)
+    term_one = np.dot(np.transpose(X),X)+sigma**2*inv_Sigma
+    term_two = np.dot(np.transpose(X),Y)+np.dot(sigma**2*inv_Sigma,mu)
+    #print(term_one.shape)
+    
     pos_mean = solve(term_one,term_two)
     pos_var = solve_sigma(sigma,X,inv_Sigma)
     return [pos_mean,pos_var]
