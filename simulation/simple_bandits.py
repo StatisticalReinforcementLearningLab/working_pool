@@ -83,7 +83,7 @@ def get_sigma_vmore(gparams):
     return np.diag([gparams.s1,gparams.s2,gparams.s3,gparams.s4])
 
 
-def get_M_time(global_params,user_id,user_study_day,history):
+def get_M_time(global_params,user_id,user_study_day,history,days):
     
     
     day_id =user_study_day
@@ -95,15 +95,18 @@ def get_M_time(global_params,user_id,user_study_day,history):
     for x_old_i in range(history.shape[0]):
         x_old = history[x_old_i]
         old_user_id = x_old[global_params.user_id_index]
-        old_day_id = x_old[global_params.user_day_index]
+        old_day_id = days[x_old_i]
         
         
         phi = np.array([x_old[i] for i in global_params.baseline_indices])
         
         t_one = np.dot(np.transpose(phi),global_params.sigma_theta)
+        #print(old_day_id)
+        time_term = (1-global_params.time_eps)**((abs(old_day_id-user_study_day))**.5)
+        #print(t_one.shape)
+        #print(time_term)
+        t_one = np.multiply(time_term,t_one)
         
-        
-    
         
         
         M[x_old_i]=t_one
@@ -265,7 +268,7 @@ def calculate_posterior_faster(global_params,user_id,user_study_day,X,users,y):
     
     return mu[-(global_params.num_responsivity_features+1):],[j[-(global_params.num_responsivity_features+1):] for j in sigma[-(global_params.num_responsivity_features+1):]]
 
-def calculate_posterior_faster_time(global_params,user_id,user_study_day,X,users,y):
+def calculate_posterior_faster_time(global_params,user_id,user_study_day,X,users,y,days):
     H = create_H(global_params.num_baseline_features,global_params.num_responsivity_features,global_params.psi_indices)
     
    
@@ -276,10 +279,10 @@ def calculate_posterior_faster_time(global_params,user_id,user_study_day,X,users
     #print(global_params.cov)
     #.reshape(X.shape[0],X.shape[0])
     #print(M.shape)
-    M = get_M_time(global_params,user_id,user_study_day,X)
+    M = get_M_time(global_params,user_id,user_study_day,X,days)
     mu = get_middle_term_time(X.shape[0],global_params.cov,global_params.noise_term,M,adjusted_rewards,global_params.mu_theta,global_params.inv_term)
     #.reshape(X.shape[0],X.shape[0])
-    sigma = get_post_sigma_time(H,global_params.cov,global_params.sigma_u.reshape(2,2),None,global_params.noise_term,M,X.shape[0],global_params.sigma_theta,global_params.inv_term)
+    sigma = get_post_sigma_time(H,global_params.cov,[],None,global_params.noise_term,M,X.shape[0],global_params.sigma_theta,global_params.inv_term)
     
     return mu[-(global_params.num_responsivity_features+1):],[j[-(global_params.num_responsivity_features+1):] for j in sigma[-(global_params.num_responsivity_features+1):]]
 
