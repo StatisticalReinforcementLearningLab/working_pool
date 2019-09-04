@@ -65,7 +65,6 @@ class MyKernel(Kernel):
         self.psi_dim_two = gparams.psi_indices[1]
         self.psi_indices =gparams.psi_indices
     
-        
       
     def forward(self, x1, x2, batch_dims=None, **params):
         
@@ -78,20 +77,27 @@ class MyKernel(Kernel):
             print('batch bims here')
        
 
-        final = self.first_mat.mul(self.time_mat)
+       #final = self.first_mat.mul(self.time_mat)
         
-        return final
+        mean_x = self.mean_module(x1)
+        covar_x = self.covar_module(x1)
+        return gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
 
 
 class GPRegressionModel(gpytorch.models.ExactGP):
     def __init__(self, train_x, train_y, likelihood,user_mat,time_mat,first_mat,gparams):
         super(GPRegressionModel, self).__init__(train_x, train_y, likelihood)
         
-       
-        self.mean_module = gpytorch.means.ZeroMean()
+        #uncomment important
+       ##self.mean_module = gpytorch.means.ZeroMean()
         #self.mean_module.constant.requires_grad=False
-        
-        self.covar_module =  MyKernel(len(gparams.baseline_indices),user_mat,time_mat,first_mat,gparams)
+        #uncomment important
+        ##self.covar_module =  MyKernel(len(gparams.baseline_indices),user_mat,time_mat,first_mat,gparams)
+    
+        self.mean_module = gpytorch.means.ZeroMean()
+        self.covar_module = gpytorch.kernels.ScaleKernel(gpytorch.kernels.RBFKernel())
+    
+    
     
     def forward(self, x):
         mean_x = self.mean_module(x)
@@ -146,7 +152,7 @@ def run(X,users,days,y,global_params):
                                   
     mll = gpytorch.mlls.ExactMarginalLogLikelihood(likelihood, model)
         #def train(num_iter):
-    num_iter = 1
+    num_iter = 10
         #if global_params.called>9:
         #num_iter=5
     with gpytorch.settings.use_toeplitz(False):
