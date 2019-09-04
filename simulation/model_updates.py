@@ -7,6 +7,7 @@ import math
 import run_gpytorchkernel
 import run_gpytorchkernel_larger
 import run_gpytorchkernel_timeeffect
+import run_gpytorchkernel_timecomp
 import operator
 import study
 import time as time_module
