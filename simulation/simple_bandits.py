@@ -83,7 +83,32 @@ def get_sigma_vmore(gparams):
     return np.diag([gparams.s1,gparams.s2,gparams.s3,gparams.s4])
 
 
-
+def get_M_time(global_params,user_id,user_study_day,history):
+    
+    
+    day_id =user_study_day
+    
+    M = [[] for i in range(history.shape[0])]
+    
+  
+    
+    for x_old_i in range(history.shape[0]):
+        x_old = history[x_old_i]
+        old_user_id = x_old[global_params.user_id_index]
+        old_day_id = x_old[global_params.user_day_index]
+        
+        
+        phi = np.array([x_old[i] for i in global_params.baseline_indices])
+        
+        t_one = np.dot(np.transpose(phi),global_params.sigma_theta)
+        
+        
+    
+        
+        
+        M[x_old_i]=t_one
+    
+    return np.array(M)
 def get_M(global_params,user_id,user_study_day,history):
   
   
@@ -240,6 +265,24 @@ def calculate_posterior_faster(global_params,user_id,user_study_day,X,users,y):
     
     return mu[-(global_params.num_responsivity_features+1):],[j[-(global_params.num_responsivity_features+1):] for j in sigma[-(global_params.num_responsivity_features+1):]]
 
+def calculate_posterior_faster_time(global_params,user_id,user_study_day,X,users,y):
+    H = create_H(global_params.num_baseline_features,global_params.num_responsivity_features,global_params.psi_indices)
+    
+   
+    ##change this to be mu_theta
+    ##is it updated?  the current mu_theta?
+    adjusted_rewards =get_RT(y,X,global_params.mu_theta,global_params.theta_dim)
+    #print('current global cov')
+    #print(global_params.cov)
+    #.reshape(X.shape[0],X.shape[0])
+    #print(M.shape)
+    M = get_M_time(global_params,user_id,user_study_day,X)
+    mu = get_middle_term_time(X.shape[0],global_params.cov,global_params.noise_term,M,adjusted_rewards,global_params.mu_theta,global_params.inv_term)
+    #.reshape(X.shape[0],X.shape[0])
+    sigma = get_post_sigma_time(H,global_params.cov,global_params.sigma_u.reshape(2,2),None,global_params.noise_term,M,X.shape[0],global_params.sigma_theta,global_params.inv_term)
+    
+    return mu[-(global_params.num_responsivity_features+1):],[j[-(global_params.num_responsivity_features+1):] for j in sigma[-(global_params.num_responsivity_features+1):]]
+
 
 def get_middle_term(X_dim,cov,noise_term,M,adjusted_rewards,mu_theta,inv_term):
   
@@ -247,6 +290,14 @@ def get_middle_term(X_dim,cov,noise_term,M,adjusted_rewards,mu_theta,inv_term):
    
     middle_term = np.matmul(middle_term,adjusted_rewards)
 
+    return np.add(mu_theta,middle_term)
+
+def get_middle_term_time(X_dim,cov,noise_term,M,adjusted_rewards,mu_theta,inv_term):
+    
+    middle_term = np.matmul(M.T,inv_term)
+    
+    middle_term = np.matmul(middle_term,adjusted_rewards)
+    
     return np.add(mu_theta,middle_term)
 
 #first_term = np.add(sigma_u,sigma_v)
@@ -280,6 +331,18 @@ def get_post_sigma(H,cov,sigma_u,sigma_v,noise_term,M,x_dim,sigma_theta,inv_term
     middle_term = np.dot(middle_term,M)
 
     last = np.add(sigma_theta,first_term)
+    last = np.subtract(last,middle_term)
+    
+    return last
+
+def get_post_sigma_time(H,cov,sigma_u,sigma_v,noise_term,M,x_dim,sigma_theta,inv_term):
+    
+    
+    middle_term = np.dot(M.T,inv_term)
+    
+    middle_term = np.dot(middle_term,M)
+    
+    last = sigma_theta
     last = np.subtract(last,middle_term)
     
     return last

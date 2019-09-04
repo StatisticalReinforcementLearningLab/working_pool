@@ -355,7 +355,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
         
         u = update_time
         pn=1
-        for epsilon in [0.7,0.9,0.1,0.5]:
+        for epsilon in [0.7]:
             
             all_actions = {}
             all_rewards = {}
