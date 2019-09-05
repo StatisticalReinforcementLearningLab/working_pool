@@ -583,7 +583,7 @@ def run(X,users,days,y,global_params):
                         #print(cov)
                         noise = likelihood.noise_covar.noise.item()
                     
-                    if abs(eigs[0][0])<0.005 or abs(eigs[0][1])<0.005 or abs(eigs[0][2])<0.005 or abs(eigs[0][3])<0.005:
+                    if abs(eigs[0][0])<0.005 and abs(eigs[0][1])<0.005 and abs(eigs[0][2])<0.005 and abs(eigs[0][3])<0.005:
                             break
 
                 except Exception as e:
