@@ -568,6 +568,7 @@ def run(X,users,days,y,global_params):
                     test_new = np.array([[model.covar_module.s1.item(),0],[0,model.covar_module.s3.item()]])
                     eigs = np.linalg.eig(test_sigma)
                     eigstwo = np.linalg.eig(test_new)
+                    print('eigs one')
                     print(eigs)
                     print('eigs two')
                     print(eigstwo)
