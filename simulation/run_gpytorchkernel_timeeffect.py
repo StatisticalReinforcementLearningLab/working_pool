@@ -569,6 +569,7 @@ def run(X,users,days,y,global_params):
                     eigs = np.linalg.eig(test_sigma)
                     eigstwo = np.linalg.eig(test_new)
                     print(eigs)
+                    print('eigs two')
                     print(eigstwo)
                     f_preds = model(X)
                     f_covar = f_preds.covariance_matrix
@@ -581,7 +582,7 @@ def run(X,users,days,y,global_params):
                         #print(cov)
                         noise = likelihood.noise_covar.noise.item()
                     
-                    if abs(eigs[0][0])<0.0005 and abs(eigs[0][1])<0.0005 and abs(eigs[0][2])<0.0005 and abs(eigs[0][3])<0.0005 and abs(eigstwo[0][0])<0.0005 and abs(eigstwo[0][1])<0.0005:
+                    if abs(eigs[0][0])<0.005 and abs(eigs[0][1])<0.005 and abs(eigs[0][2])<0.005 and abs(eigs[0][3])<0.005 and abs(eigstwo[0][0])<0.0005 and abs(eigstwo[0][1])<0.0005:
                             break
 
                 except Exception as e:
