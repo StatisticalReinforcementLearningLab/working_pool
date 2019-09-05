@@ -565,7 +565,7 @@ def run(X,users,days,y,global_params):
                     sigma_temp = [model.covar_module.u1.item(),model.covar_module.u2.item(),model.covar_module.u3.item(),model.covar_module.u4.item(),model.covar_module.rho_12.item(),model.covar_module.rho_13.item(),model.covar_module.rho_14.item(),model.covar_module.rho_23.item(),model.covar_module.rho_24.item(),model.covar_module.rho_34.item()]
                     sigma_v_temp =[model.covar_module.s1.item(),model.covar_module.s2.item(),model.covar_module.s3.item(),model.covar_module.s4.item()]
                     test_sigma = get_sigma_umore(sigma_temp)
-                    test_new = np.array([[model.covar_module.s1.item()0,],[0,model.covar_module.s3.item()]])
+                    test_new = np.array([[model.covar_module.s1.item(),0],[0,model.covar_module.s3.item()]])
                     eigs = np.linalg.eig(test_sigma)
                     eigstwo = np.linalg.eig(test_new)
                     print(eigs)
