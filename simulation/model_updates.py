@@ -237,8 +237,8 @@ def update(algo_type,train_type,experiment,time,global_policy_params,personal_po
                                                                       global_policy_params.history[0], global_policy_params.history[1],global_policy_params.history[3],global_policy_params.history[2] )
                 mu_beta = temp[0]
                 Sigma_beta = temp[1]
-                with open('../../look/temp_cov_{}.pkl'.format(participant.pid),'wb') as f:
-                    pickle.dump(Sigma_beta,f)
+                    #with open('../../look/temp_cov_{}.pkl'.format(participant.pid),'wb') as f:
+                    # pickle.dump(Sigma_beta,f)
                                                                       ##change here
                 personal_policy_params.update_mus(participant.pid,mu_beta,2)
                 personal_policy_params.update_sigmas(participant.pid,Sigma_beta,2)
