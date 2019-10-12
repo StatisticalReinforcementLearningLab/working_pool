@@ -36,12 +36,15 @@ def rbf_custom_np( X, X2=None):
         X2=X
     return math.exp(-((X-X2)**2)/1.0)
 
-def dist(x,x2):
-    return math.exp(-((x-x2)**2)/1.0)
+
 
 def get_sigma_u(u1,u2,rho):
     off_diagaonal_term = u1**.5*u2**.5*(rho-1)
     return np.array([[u1,off_diagaonal_term],[off_diagaonal_term,u2]])
+
+
+def dist(x,x2):
+    return math.exp(-((x-x2)**2)/1.0)
 
 def get_distance(days):
     to_return = []
@@ -528,8 +531,8 @@ def run(X,users,days,y,global_params):
   
     user_mat = torch.from_numpy(user_mat).float()
     time_mat = torch.from_numpy(time_mat).float()
-    print(time_mat.shape)
-    print(first_mat.shape)
+    #print(time_mat.shape)
+    #print(first_mat.shape)
   
     model = GPRegressionModel(X, y, likelihood,user_mat,time_mat,first_mat,global_params)
     

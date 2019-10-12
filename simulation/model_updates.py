@@ -102,6 +102,11 @@ def update(algo_type,train_type,experiment,time,global_policy_params,personal_po
 #global_policy_params.history =temp_data
                 if temp_params['cov'] is not None:
                     global_policy_params.update_params_more(temp_params)
+                sigma_u =simple_bandits.get_sigma_umore(global_policy_params)
+                cov = simple_bandits.other_cov_notime(temp_data[0],global_policy_params.sigma_theta,random_effects,sigma_u,simple_bandits.get_users(temp_data[1],temp_data[1]))
+        
+                global_policy_params.cov = cov
+                
                 inv_term = simple_bandits.get_inv_term(global_policy_params.cov,temp_data[0].shape[0],global_policy_params.noise_term)
                         
                 global_policy_params.inv_term = inv_term
@@ -214,7 +219,13 @@ def update(algo_type,train_type,experiment,time,global_policy_params,personal_po
             temp_params={'cov':global_policy_params.cov,\
                 'noise':global_policy_params.noise_term,\
                     'like':-100333,'sigma_u':global_policy_params.sigma_u,'sigma_v':global_policy_params.sigma_v}
-        
+        random_effects = np.array(temp_data[0])[:,global_policy_params.psi_indices]
+
+        sigma_u =simple_bandits.get_sigma_umore(global_policy_params)
+        sigma_v =simple_bandits.get_sigma_vmore(global_policy_params)
+        cov = simple_bandits.other_cov_time(temp_data[0],global_policy_params.sigma_theta,random_effects,sigma_u,simple_bandits.get_users(temp_data[1],temp_data[1]),sigma_v,simple_bandits.get_distance(temp_data[3]))
+
+        global_policy_params.cov = cov
         inv_term = simple_bandits.get_inv_term(global_policy_params.cov,temp_data[0].shape[0],global_policy_params.noise_term)
 
         global_policy_params.inv_term = inv_term
@@ -226,6 +237,8 @@ def update(algo_type,train_type,experiment,time,global_policy_params,personal_po
                                                                       global_policy_params.history[0], global_policy_params.history[1],global_policy_params.history[3],global_policy_params.history[2] )
                 mu_beta = temp[0]
                 Sigma_beta = temp[1]
+                with open('../../look/temp_cov_{}.pkl'.format(participant.pid),'wb') as f:
+                    pickle.dump(Sigma_beta,f)
                                                                       ##change here
                 personal_policy_params.update_mus(participant.pid,mu_beta,2)
                 personal_policy_params.update_sigmas(participant.pid,Sigma_beta,2)
