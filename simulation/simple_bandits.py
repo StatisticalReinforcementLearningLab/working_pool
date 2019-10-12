@@ -48,7 +48,7 @@ def other_cov_time(data,sigma_theta,random_effects,sigma_u,user_matrix,sigma_v,t
     #print(three[:,0])
     return one+two+three
 
-def other_cov_notime(data,sigma_theta,random_effects,sigma_u,user_matrix,sigma_v):
+def other_cov_notime(data,sigma_theta,random_effects,sigma_u,user_matrix):
     #K0 <- phi.mat %*% Sigma.theta %*% t(phi.mat)
     #K1 <- (psi.mat %*% Sigma.u %*% t(psi.mat)) * id.mat
     # K2 <- (psi.mat %*% Sigma.v %*% t(psi.mat)) * rho.mat
