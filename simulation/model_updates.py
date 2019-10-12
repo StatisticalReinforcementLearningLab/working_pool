@@ -104,6 +104,7 @@ def update(algo_type,train_type,experiment,time,global_policy_params,personal_po
                     global_policy_params.update_params_more(temp_params)
                 sigma_u =simple_bandits.get_sigma_umore(global_policy_params)
                 print(sigma_u)
+                random_effects = np.array(temp_data[0])[:,global_policy_params.psi_indices]
                 cov = simple_bandits.other_cov_notime(temp_data[0],global_policy_params.sigma_theta,random_effects,sigma_u,simple_bandits.get_users(temp_data[1],temp_data[1]))
                 print(cov)
                 global_policy_params.cov = cov
