@@ -385,7 +385,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 per_rewards,perregrets = get_regret_person_specific(experiment)
                 gids = make_to_groupids(experiment)
                 eps = '_eps_{}'.format(epsilon)
-                return experiment,glob,personal
+                #return experiment,glob,personal
 
                 filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_{}94unstaggered_group_time_cond_newsigma{}{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,time_cond,cend,eps)
                 with open(filename,'wb') as f:
