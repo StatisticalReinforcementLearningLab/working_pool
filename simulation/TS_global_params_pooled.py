@@ -13,7 +13,8 @@ class TS_global_params:
     Keeps track of hyper-parameters for any TS procedure. 
     '''
     
-    def __init__(self,xi=10,baseline_features=None,psi_features=None,responsivity_keys=None,uparams = None,vparams=None,hob_params=None,case=None,correct =True ):
+    def __init__(self,xi=10,baseline_features=None,psi_features=None,responsivity_keys=None,uparams = None,vparams=None,hob_params=None,case=None,correct =True,action_indices_one=None,\
+                 action_indices_two=None,g_indices=None):
         self.nums = set([np.float64,int,float])
         self.pi_max = 0.8
         self.pi_min = 0.1
@@ -30,7 +31,10 @@ class TS_global_params:
         self.num_baseline_features = len(baseline_features)
         self.psi_features = psi_features
         self.num_responsivity_features = len(responsivity_keys)
-       
+        self.action_indices_one = action_indices_one
+        self.action_indices_two = action_indices_two
+        self.g_indices = g_indices
+        
         self.psi_indices = psi_features
         self.sim_number=None
         
@@ -48,6 +52,7 @@ class TS_global_params:
       
         self.theta_dim =1+self.num_baseline_features + 2*(1+self.num_responsivity_features)
         self.baseline_indices =  [i for i in range(self.theta_dim)]
+        
         #print(self.theta_dim)
         self.mu_theta =np.zeros(self.theta_dim)
         self.mu_theta[0]=4.6

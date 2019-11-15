@@ -23,7 +23,8 @@ import model_updates
 
 def initialize_policy_params_TS(experiment,update_period,\
                                 standardize=False,baseline_features=None,psi_features=None,\
-                                responsivity_keys=None,algo_type=None,hob_params=None,case=None,correct=True):
+                                responsivity_keys=None,algo_type=None,hob_params=None,case=None,correct=True,action_indices_one=None,\
+                                action_indices_two=None,g_indices=None):
    
     u_params=None
     v_params=None
@@ -40,7 +41,7 @@ def initialize_policy_params_TS(experiment,update_period,\
         #[0.0433,0.0337,0.0067,0.0072,1.7783,1.7505,1.6506,1.7960,1.7069,1.6745,0.0165,0.0,0.0388,0.0]
         v_params =[0.0165,0.0,0.0388,0.0]
 
-    global_p =gtp.TS_global_params(21,baseline_features=baseline_features,psi_features=psi_features, responsivity_keys= responsivity_keys,uparams = u_params,vparams = v_params,case=case,correct=correct)
+    global_p =gtp.TS_global_params(21,baseline_features=baseline_features,psi_features=psi_features, responsivity_keys= responsivity_keys,uparams = u_params,vparams = v_params,case=case,correct=correct,action_indices_one=action_indices_one,action_indices_two=action_indices_two,g_indices=g_indices)
     
     
     
@@ -370,12 +371,19 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 psi = []
                 #if algo_type=='pooling_four':
                 psi = ['location']
+                action_indices_one = [1+len(baseline)]+\
+                    [responsivity_keys.index(k)+len(baseline)+2 for k in psi]
+                action_indices_two = [i+len(responsivity_keys)+1 for i in action_indices_one]
+                g_indices = [0]+[baseline.index(i)+1 for i in psi]
+                print(action_indices_one)
+                print(action_indices_two)
+                print(g_indices)
                 cend=''
                 degree= 5
                 if not correct:
                     cend = '_inc'
                     degree=0.01
-                glob,personal = initialize_policy_params_TS(experiment,u,standardize=False,baseline_features=baseline,psi_features=psi,responsivity_keys=responsivity_keys,algo_type =algo_type,hob_params={'degree':degree},case=case,correct=correct)
+                glob,personal = initialize_policy_params_TS(experiment,u,standardize=False,baseline_features=baseline,psi_features=psi,responsivity_keys=responsivity_keys,algo_type =algo_type,hob_params={'degree':degree},case=case,correct=correct,action_indices_one=action_indices_one,action_indices_two=action_indices_two,g_indices=g_indices)
                 glob.sim_number=sim
                 glob.time_eps = epsilon
                 hist = new_kind_of_simulation(experiment,'TS',personal,glob,feat_trans=feat_trans,algo_type=algo_type,case=case,sim_num=sim,train_type=train_type)
@@ -387,7 +395,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 eps = '_eps_{}'.format(epsilon)
                 #return experiment,glob,personal
 
-                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_{}94unstaggered_group_time_cond_newsigma{}{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,time_cond,cend,eps)
+                filename = '{}{}/population_size_{}_update_days_{}_{}_static_sim_{}_pop_{}_{}94unstaggered_group_time_cond_newsigma_action{}{}.pkl'.format('{}{}/'.format(write_directory,algo_type),case,pop_size,u,'short',sim,pn,time_cond,cend,eps)
                 with open(filename,'wb') as f:
                     pickle.dump({'gids':gids,'regrets':rewards,'oregrets':other_regrets,'actions':actions,'pregret':per_rewards,'poregret':perregrets,'history':to_save,'pprams':personal,'gparams':glob.mus2},f)
       

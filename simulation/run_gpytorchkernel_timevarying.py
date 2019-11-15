@@ -64,7 +64,9 @@ class MyKernel(Kernel):
         self.psi_dim_one = gparams.psi_indices[0]
         self.psi_dim_two = gparams.psi_indices[1]
         self.psi_indices =gparams.psi_indices
-    
+        self.action_indices_one=gparams.action_indices_one
+        self.action_indices_two=gparams.action_indices_two
+        self.g_indices=gparams.g_indices
       
     def forward(self, x1, x2, batch_dims=None, **params):
         
