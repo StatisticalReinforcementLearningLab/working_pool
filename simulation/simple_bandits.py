@@ -131,35 +131,9 @@ def get_sigma_vmore(gparams):
     return np.diag([gparams.s1,gparams.s2,gparams.s3,gparams.s4])
 
 
-def get_M_time(global_params,user_id,user_study_day,history,days):
-    
-    
-    day_id =user_study_day
-    
-    M = [[] for i in range(history.shape[0])]
-    
-  
-    
-    for x_old_i in range(history.shape[0]):
-        x_old = history[x_old_i]
-        old_user_id = x_old[global_params.user_id_index]
-        old_day_id = days[x_old_i]
+
         
-        
-        phi = np.array([x_old[i] for i in global_params.baseline_indices])
-        
-        t_one = np.dot(np.transpose(phi),global_params.sigma_theta)
-        #print(old_day_id)
-        time_term = (1-global_params.time_eps)**((abs(old_day_id-user_study_day))**.5)
-        #print(t_one.shape)
-        #print(time_term)
-        t_one = np.multiply(time_term,t_one)
-        
-        
-        
-        M[x_old_i]=t_one
-    
-    return np.array(M)
+
 def get_M(global_params,user_id,user_study_day,history):
   
   
