@@ -179,8 +179,8 @@ def new_kind_of_simulation(experiment,policy=None,personal_policy_params=None,gl
 
         for person in experiment.dates_to_people[time]:
             participant = experiment.population[person]
-            if participant.current_day_counter>17:
-                return
+                #if participant.current_day_counter>17:
+                #return
             if participant.current_day!=time.date():
                 participant.current_day_counter=participant.current_day_counter+1
                 participant.current_day= time.date()
