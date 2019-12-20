@@ -388,7 +388,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 glob.sim_number=sim
                 glob.time_eps = epsilon
                 hist = new_kind_of_simulation(experiment,'TS',personal,glob,feat_trans=feat_trans,algo_type=algo_type,case=case,sim_num=sim,train_type=train_type)
-                return experiment,glob,personal
+                #return experiment,glob,personal
                 to_save = make_to_save(experiment)
                 actions,rewards,other_regrets = get_regret(experiment)
                 per_rewards,perregrets = get_regret_person_specific(experiment)
