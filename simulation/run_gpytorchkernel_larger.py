@@ -70,6 +70,9 @@ class MyKernel(Kernel):
         self.psi_dim_one = gparams.psi_indices[0]
         self.psi_dim_two = gparams.psi_indices[1]
         self.psi_indices =gparams.psi_indices
+        self.action_indices_one=gparams.action_indices_one
+        self.action_indices_two=gparams.action_indices_two
+        self.g_indices=gparams.g_indices
         #print(self.psi_dim_one)
         #print(self.psi_dim_two)
         
@@ -172,38 +175,35 @@ class MyKernel(Kernel):
     
     def forward(self, x1, x2, batch_dims=None, **params):
         
-        #us = torch.cat([self.u1, self.u2], 0) # us is a vector of size 2
-        #print(x1[0,:,0:2].size())
-        # print(x1.size())
-        #print(us.size())
-        #x1_ =torch.stack((x1[:,self.psi_dim_one],x1[:,self.psi_dim_two]),dim=1)
-        x1_ = torch.stack([x1[:,i] for  i in self.psi_indices],dim=1)
-        #x1_ =    torch.stack((x1[:,self.psi_dim_one],x1[:,self.psi_dim_two]),dim=1)
-        #x2_ =torch.stack((x2[:,self.psi_dim_one],x2[:,self.psi_dim_two]),dim=1)
-        x2_ =    torch.stack([x2[:,i] for  i in self.psi_indices],dim=1)
-        #print(x1_)
-        #print(x2_)
-        #u2_= self.u2
-        #u1_ =self.u1
-        #print(self.u1)
-        #print(x1_)
-        #print(x2_)
+        
+        action_vector = torch.stack([torch.Tensor(x1)[:,i] for  i in [self.action_indices_one]],dim=1)\
++torch.stack([torch.Tensor(x1)[:,i] for  i in [self.action_indices_two]],dim=1)
+    
+        baseline_vector =torch.stack([torch.Tensor(x1)[:,i] for  i in [self.g_indices]],dim=1)
+     
+        fake_vector_one = torch.cat((baseline_vector.squeeze(),action_vector.squeeze()),1)
+    
+        action_vector = torch.stack([torch.Tensor(x2)[:,i] for  i in [self.action_indices_one]],dim=1)\
++torch.stack([torch.Tensor(x2)[:,i] for  i in [self.action_indices_two]],dim=1)
+    #combine into new feature vector
+        baseline_vector =torch.stack([torch.Tensor(x2)[:,i] for  i in [self.g_indices]],dim=1)
+        fake_vector_two = torch.cat((baseline_vector.squeeze(),action_vector.squeeze()),1)
+    #x1=[]
+    #print(fake_vector_two)
+#x1_ = torch.stack([ fake_vector_one[:,i] for  i in self.psi_indices],dim=1)
+        
+#x2_ =    torch.stack([fake_vector_two[:,i] for  i in self.psi_indices],dim=1)
+
+        x1_ =fake_vector_one
+        #torch.stack([ fake_vector_one[:,i] for  i in self.psi_indices],dim=1)
+        
+        x2_ =fake_vector_two
+#x1_ = torch.stack([x1[:,i] for  i in self.psi_indices],dim=1)
+       
+#x2_ =    torch.stack([x2[:,i] for  i in self.psi_indices],dim=1)
+       
         if batch_dims == (0, 2):
             print('batch bims here')
-        #pass
-        #print(x1_.size())
-        
-        #x1_ = x1_.view(x1_.size(0), x1_.size(1), -1, 1)
-        #x1_ = x1_.permute(0, 2, 1, 3).contiguous()
-        #x1_ = x1_.view(-1, x1_.size(-2), x1_.size(-1))
-        
-        
-        #x2_ = x2_.view(x2_.size(0), x2_.size(1), -1, 1)
-        #x2_ = x2_.permute(0, 2, 1, 3).contiguous()
-        #x2_ = x2_.view(-1, x2_.size(-2), x2_.size(-1))
-        #print(x1_.size())
-        #print(x2_.size())
-        #prod = MatmulLazyTensor(x1_, x2_.transpose(1, 0))
         
         prod = MatmulLazyTensor(x1_[:,0:1], x2_[:,0:1].transpose(-1, -2))
         

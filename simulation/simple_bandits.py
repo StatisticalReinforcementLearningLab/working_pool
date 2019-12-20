@@ -180,6 +180,8 @@ def get_M(global_params,user_id,user_study_day,history):
 def get_RT(y,X,sigma_theta,x_dim):
     
     to_return = [y[i]-np.dot(X[i][0:x_dim],sigma_theta) for i in range(len(X))]
+    #print(to_return)
+    #print([np.dot(X[i][0:x_dim],sigma_theta) for i in range(len(X))])
     return np.array([i[0] for i in to_return])
 
 
@@ -230,9 +232,10 @@ def get_M_faster(global_params,user_id,user_study_day,history,users,sigma_u):
 
 def calculate_posterior_current(global_params,user_id,user_study_day,X,users,y):
     sigma_u =get_sigma_umore(global_params)
-   
+    #print('current')
+    #print(sigma_u)
     H = create_H_four(global_params.num_baseline_features,global_params.num_responsivity_features,global_params.psi_indices)
-    
+    #print(H)
     M = get_M_faster_four(global_params,user_id,user_study_day,X,users,sigma_u)
     
     adjusted_rewards =get_RT(y,X,global_params.mu_theta,global_params.theta_dim)
@@ -266,7 +269,7 @@ def calculate_posterior_time_effects(global_params,user_id,user_study_day,X,user
     sigma_u =get_sigma_umore(global_params)
     sigma_v =get_sigma_vmore(global_params)
     H = create_H_four(global_params.num_baseline_features,global_params.num_responsivity_features,global_params.psi_indices)
-    
+    #print(H)
     M = get_M_faster_four_timeeffects(global_params,user_id,user_study_day,X,users,days,sigma_u,sigma_v)
   
     adjusted_rewards =get_RT(y,X,global_params.mu_theta,global_params.theta_dim)
@@ -427,7 +430,7 @@ def get_M_faster_four(global_params,user_id,user_study_day,history,users,sigma_u
         print('problem {}'.format(user_id))
     my_days = [int(user_ids[i]==user_id) for i in range(len(user_ids))]
     user_matrix = np.diag(my_days)
-
+#print(user_matrix)
     t_two = np.matmul(user_matrix,temp)
 
     term = np.add(t_one,t_two)

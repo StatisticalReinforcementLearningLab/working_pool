@@ -179,7 +179,8 @@ def new_kind_of_simulation(experiment,policy=None,personal_policy_params=None,gl
 
         for person in experiment.dates_to_people[time]:
             participant = experiment.population[person]
-            
+            if participant.current_day_counter>17:
+                return
             if participant.current_day!=time.date():
                 participant.current_day_counter=participant.current_day_counter+1
                 participant.current_day= time.date()
@@ -375,9 +376,9 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                     [responsivity_keys.index(k)+len(baseline)+2 for k in psi]
                 action_indices_two = [i+len(responsivity_keys)+1 for i in action_indices_one]
                 g_indices = [0]+[baseline.index(i)+1 for i in psi]
-                print(action_indices_one)
-                print(action_indices_two)
-                print(g_indices)
+                #print(action_indices_one)
+                #print(action_indices_two)
+                #print(g_indices)
                 cend=''
                 degree= 5
                 if not correct:
@@ -387,7 +388,7 @@ def run_many(algo_type,cases,sim_start,sim_end,update_time,dist_root,write_direc
                 glob.sim_number=sim
                 glob.time_eps = epsilon
                 hist = new_kind_of_simulation(experiment,'TS',personal,glob,feat_trans=feat_trans,algo_type=algo_type,case=case,sim_num=sim,train_type=train_type)
-                #return hist
+                return experiment,glob,personal
                 to_save = make_to_save(experiment)
                 actions,rewards,other_regrets = get_regret(experiment)
                 per_rewards,perregrets = get_regret_person_specific(experiment)
